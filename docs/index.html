@@ -1,0 +1,79 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title>Sherlock: A Deep Learning Approach to Semantic Data Type Detection</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <link rel="icon" href="favicon.ico">
+
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+  <!--[if IE]>
+	<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+  <![endif]-->
+  <div class="wrapper">
+   <header>
+     <teaser>
+     </teaser>
+     <h1>
+      <b>Sherlock</b><br>
+      <span>A Deep Learning Approach to Semantic Data Type Detection</span>
+    </h1>
+    <img class="teaser" width="100%" src="img/teaser.png" />
+  </header>
+  <section>
+    <h2>Abstract</h2>
+    <p>
+    Correctly detecting the semantic type of data columns is crucial for data science tasks such as automated data cleaning, schema matching, and data discovery. Existing data preparation and analysis systems rely on dictionary lookups and regular expression matching to detect semantic types. However, these matching-based approaches often are not robust to dirty data and only detect a limited number of types. We introduce Sherlock, a multi-input deep neural network for detecting semantic types. We train Sherlock on 686,765 data columns retrieved from the VizNet corpus by matching 78 semantic types from DBpedia to column headers. We characterize each matched column with 1,588 features describing the statistical properties, character distributions, word embeddings, and paragraph vectors of column values. Sherlock achieves a support-weighted F1 score of 0.89, exceeding that of machine learning baselines, dictionary and regular expression benchmarks, and the consensus of crowdsourced annotations.
+   </p>
+ </section>
+ <section>
+  <h2>Resources</h2>
+  <div class="responsive-content">
+    <a href="assets/2019-Sherlock-KDD.pdf" target="_blank">Paper</a><span class="sep"></span><a href="https://github.com/madelonhulsebos/sherlock" target="_blank">GitHub</a><span class="sep"></span><a href="https://youtu.be/vUPnez9ZFIA" target="_blank">Video</a>
+  </div>
+</section>
+<section>
+    <h2>Reference</h2>
+
+  <div class="citation-container">
+    <div class="citation">Madelon Hulsebos, Kevin Hu, Michiel Bakker, Emanuel Zgraggen, Arvind Satyanarayan, Tim Kraska, Çağatay Demiralp, and César Hidalgo. 2019. Sherlock: A Deep Learning Approach to Semantic Data Type Detection. In The 25th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD ’19), August 4–8, 2019, Anchorage, AK, USA. ACM, New York, NY, USA, 9 pages. https://doi.org/10.1145/3292500.3330993</div>
+    <span class="citation-title">Plain Text</span>
+  </div>
+
+  <div class="citation-container">
+    <div class="citation">@inproceedings{Hulsebos:2019:SDL:3292500.3330993,
+ author = {Hulsebos, Madelon and Hu, Kevin and Bakker, Michiel and Zgraggen, Emanuel and Satyanarayan, Arvind and Kraska, Tim and Demiralp, \c{C}agatay and Hidalgo, C{\'e}sar},
+ title = {Sherlock: A Deep Learning Approach to Semantic Data Type Detection},
+ booktitle = {Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery \&\#38; Data Mining},
+ year={2019},
+ publisher = {ACM},
+}
+</div>
+    <span class="citation-title">BibteX</span>
+  </div>
+  <section>
+    <h2>People</h2>
+    <a href="https://github.com/madelonhulsebos" target="_blank">Madelon Hulsebos</a><span class="sep"></span><a href="http://kzh.space" target="_blank">Kevin Hu</a><span class="sep"></span><a href="https://www.media.mit.edu/people/bakker/overview" target="_blank">Michiel Bakker</a><span class="sep"></span><a href="http://emanuelzgraggen.com/" target="_blank">Emanuel Zgraggen</a><span class="sep"></span><a href="https://arvindsatya.com/" target="_blank">Arvind Satyanarayan</a><span class="sep"></span><a href="http://people.csail.mit.edu/kraska/" target="_blank">Tim Kraska</a><span class="sep"></span><a href="https://hci.stanford.edu/~cagatay/" target="_blank">Çağatay Demiralp</a><span class="sep"></span><a href="https://chidalgo.com/" target="_blank">César Hidalgo</a>
+  </section>
+  <footer>
+    <div class="logos">
+     <a href="https://www.media.mit.edu" target="_blank"><img class="logo" src="img/ml.png" /></a>
+     <a href="https://www.csail.mit.edu" target="_blank"><img class="logo" src="img/csail.png" /></a>
+   </div>
+ </footer>
+</div>
+</body>
+
+</html>
