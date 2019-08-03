@@ -6,7 +6,7 @@ Sherlock is a deep-learning approach to semantic data type detection which is im
 
 ## Project Organization
      
-    ├── docs               <- Files for http://sherlock.media.mit.edu landing page.
+    ├── docs               <- Files for <https://sherlock.media.mit.edu> landing page.
      
     ├── data  
         ├── processed      <- Example of preprocessed data set (features and labels).
