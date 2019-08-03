@@ -5,15 +5,17 @@ Sherlock is a deep-learning approach to semantic data type detection which is im
 ##### More details about this repository follow. 
 
 ## Project Organization
-
-    ├── data
-        ├── processed      <- Examples of preprocessed data sets (feature vectors and labels).
+     
+    ├── docs               <- Files for http://sherlock.media.mit.edu landing page.
+     
+    ├── data  
+        ├── processed      <- Example of preprocessed data set (features and labels).
         └── raw            <- Raw data example corresponding to preprocessed data.
      
     ├── notebooks          <- Notebooks demonstrating the deployment of Sherlock using this repository.
-            └── run_sherlock.py
+            └── retrain_sherlock.ipynb
      
-    ├── src                <- Source code for working with this project.
+    ├── src                
         ├── deploy         <- Scripts to (re)train models on new data, and generate predictions.
             └── classes_sherlock.npy
             └── predict_sherlock.py
@@ -28,10 +30,6 @@ Sherlock is a deep-learning approach to semantic data type detection which is im
         ├── models         <- Trained models.
             ├── sherlock_model.json
             └── sherlock_weights.h5
-            
-    ├── LICENSE
-    
-    ├── TO COME.txt       <- File describing expected repository contents.
     
     └── requirements.txt  <- Dependencies for reproducing the work, and using the provided scripts.
 
