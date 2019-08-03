@@ -78,6 +78,10 @@ target/
 # celery beat schedule file
 celerybeat-schedule
 
+# additional files
+glove.6B.50d.txt
+par_vec_trained_400.pkl.docvecs.vectors_docs.npy
+
 # SageMath parsed files
 *.sage.py
 
