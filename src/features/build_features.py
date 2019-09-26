@@ -52,7 +52,7 @@ def build_features(data):
     n_samples = 1000
     vec_dim = 400
     i = 0
-    for raw_sample in data.iterrows():
+    for raw_sample in data:
 
         i = i + 1
         if i % 20 == 0:
