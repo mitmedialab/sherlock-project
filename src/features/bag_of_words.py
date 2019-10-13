@@ -7,12 +7,12 @@ from collections import OrderedDict
 
 # Input: a single column in the form of a pandas series
 # Output: ordered dictionary holding bag of words features
-def extract_bag_of_words_features(data):
+def extract_bag_of_words_features(data, n_val):
     
     f = OrderedDict()
     data = data.dropna()
     
-    n_val = data.size
+    #n_val = data.size
     
     if not n_val: return
     

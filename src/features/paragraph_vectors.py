@@ -11,6 +11,7 @@ def tagcol_paragraph_embeddings_features(train_data):
     
     # Expects a dataframe with a 'values' column
     train_data_values = train_data['values']
+    random.seed(13)
     columns = [TaggedDocument(random.sample(col, min(1000, len(col))), [i]) for i, col in enumerate(train_data_values.values)]
     
     return columns
@@ -20,9 +21,7 @@ def tagcol_paragraph_embeddings_features(train_data):
 # Output: a stored retrained model
 # Only needed for training.
 def train_paragraph_embeddings_features(columns, dim):
-        
-    print('Training paragraph vectors with vector dimension: ', dim)
-    
+
     # Train Doc2Vec model
     model = Doc2Vec(columns, dm=0, negative=3, workers=8, vector_size=dim, epochs=20, min_count=2, seed=13)
 
@@ -36,14 +35,13 @@ def train_paragraph_embeddings_features(columns, dim):
 # Output: ordered dictionary holding paragraph vector features
 def infer_paragraph_embeddings_features(data, dim):
 
-    print('Inferring paragraph vectors with vector dimension: ', dim)
-
     # Load pretrained paragraph vector model
     model = Doc2Vec.load('../src/features/par_vec_trained_{}.pkl'.format(dim))
 
     f = pd.DataFrame()
 
     if len(data) > 1000:
+        random.seed(13)
         vec = random.sample(data, 1000)
     else:
         vec = data
@@ -56,6 +54,6 @@ def infer_paragraph_embeddings_features(data, dim):
     for i, col in enumerate(f):
         col_names.append('par_vec_{}'.format(i))
         
-    f.columns = col_names  
+    f.columns = col_names
 
     return f

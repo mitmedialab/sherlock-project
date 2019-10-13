@@ -6,9 +6,12 @@ from collections import OrderedDict
 
 # Input: a single column in the form of pandas series
 # Output: ordered dictionary holding bag of character features
-def extract_bag_of_characters_features(data, n_val):
+def extract_bag_of_characters_features(data):
     
-    characters_to_check = [ '['+ c + ']' for c in string.printable if c not in ( '\n', '\\', '\v', '\r', '\t', '^' )] + ['[\\\\]', '[\^]']
+    characters_to_check = (
+            ['['+ c + ']' for c in string.printable if c not in ('\n', '\\', '\v', '\r', '\t', '^')]
+            + ['[\\\\]', '[\^]']
+    )
     
     f = OrderedDict()
 
