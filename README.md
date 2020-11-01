@@ -2,12 +2,9 @@
 
 Sherlock is a deep-learning approach to semantic data type detection which is important for, among others, data cleaning and schema matching. This repository provides data and scripts to guide the deployment of Sherlock.
 
-## Usage of repository
 
-### Data download
-
-
-### Usage demonstration through notebook
+### Demonstration of usage
+A notebook can be found in `notebooks/` which shows how to download the raw and preprocessed data files, and demonstrates the usage of Sherlock.
 
 
 ### Data
