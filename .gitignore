@@ -84,6 +84,7 @@ celerybeat-schedule
 # additional files/directories
 glove.6B.50d.txt
 par_vec_trained_400.pkl.docvecs.vectors_docs.npy
+data/data/
 data/processed
 data/raw
 data.zip
@@ -100,9 +101,10 @@ ENV/
 env.bak/
 venv.bak/
 
-# Spyder project settings
+# IDE
 .spyderproject
 .spyproject
+.vscode
 
 # Rope project settings
 .ropeproject
@@ -112,3 +114,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# MAC OS
+.DS_Store
