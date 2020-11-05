@@ -4,7 +4,7 @@ Sherlock is a deep-learning approach to semantic data type detection which is im
 
 
 ### Installation of package
-You can use Sherlock by installing the package by cloning this repository, navigating to the root directory of this repository and run `pip install .`.
+This project is not installable through PyPI yet. For now, you can install Sherlock by cloning this repository, navigating to the root directory of this repository and run `pip install .`.
 
 
 ### Demonstration of usage
