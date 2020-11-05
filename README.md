@@ -3,6 +3,10 @@
 Sherlock is a deep-learning approach to semantic data type detection which is important for, among others, data cleaning and schema matching. This repository provides data and scripts to guide the deployment of Sherlock.
 
 
+### Installation of package
+You can use Sherlock by installing the package by cloning this repository, navigating to the root directory of this repository and run `pip install .`.
+
+
 ### Demonstration of usage
 A notebook can be found in `notebooks/` which shows how to download the raw and preprocessed data files, and demonstrates the usage of Sherlock.
 
@@ -37,13 +41,13 @@ Sherlock can be retrained by using the code in the `deploy.train_sherlock` modul
     ├── notebooks   <- Notebooks demonstrating the deployment of Sherlock using this repository.
             └── retrain_sherlock.ipynb
 
-    ├── sherlock
+    ├── sherlock  <- Package files.
         ├── deploy  <- Files and modules to (re)train models on new data and generate predictions.
             └── classes_sherlock.npy
             └── model_helpers.py
             └── predict_sherlock.py
             └── train_sherlock.py
-        ├── features     <- Scripts to turn raw data, storing raw data columns, into features.
+        ├── features     <- Files to turn raw data, storing raw data columns, into features.
             ├── feature_column_identifiers   <- Directory with feature names categorized by feature set.
                └── char_col.tsv
                └── par_col.tsv
