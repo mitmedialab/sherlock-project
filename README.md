@@ -26,22 +26,25 @@ Sherlock can be retrained by using the code in the `deploy.train_sherlock` modul
 
 
 ## Project Organization
-     
-    ├── docs   <- Files for https://sherlock.media.mit.edu landing page.
-     
     ├── data   <- Placeholder directory to download data into.
-     
+
+    ├── docs   <- Files for https://sherlock.media.mit.edu landing page.
+
+    ├── models  <- Trained models.
+        ├── sherlock_model.json
+        └── sherlock_weights.h5
+
     ├── notebooks   <- Notebooks demonstrating the deployment of Sherlock using this repository.
             └── retrain_sherlock.ipynb
-     
-    ├── sherlock                
-        ├── deploy  <- Scripts to (re)train models on new data and generate predictions.
+
+    ├── sherlock
+        ├── deploy  <- Files and modules to (re)train models on new data and generate predictions.
             └── classes_sherlock.npy
             └── model_helpers.py
             └── predict_sherlock.py
             └── train_sherlock.py
         ├── features     <- Scripts to turn raw data, storing raw data columns, into features.
-            ├── feature_column_identifiers   <- directory to hold feature names categorized by feature set.
+            ├── feature_column_identifiers   <- Directory with feature names categorized by feature set.
                └── char_col.tsv
                └── par_col.tsv
                └── rest_col.tsv
@@ -52,10 +55,6 @@ Sherlock can be retrained by using the code in the `deploy.train_sherlock` modul
             └── paragraph_vectors.py
             └── preprocessing.py
             └── word_embeddings.py
-        ├── models  <- Trained models.
-            ├── sherlock_model.json
-            └── sherlock_weights.h5
-    
-    └── requirements.txt <- Project dependencies.
+        ├── helpers.py     <- Supportive modules.
 
 ------------
