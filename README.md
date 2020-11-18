@@ -20,8 +20,7 @@ This will download 3.6GB of data into the `data` directory.
 To use the pretrained model for generating predictions for a new dataset, features can be extracted using the `features.preprocessing` module. Please note that extracting features can take quite long due to the unoptimized code.
 With the resulting feature vectors, the pretrained Sherlock model can be deployed on the dataset.
 
-To retrain Sherlock, you are currently restricted to using 78 classes to comply with the original model architecture.
-However, you can alter the model through the `models/sherlock_model.json` if you want to change the number of units in the final softmax layer. The code of the neural network behind Sherlock will be added soon.
+To retrain Sherlock, you are currently restricted to using 78 classes to comply with the original model architecture. The code of the neural network behind Sherlock will be added soon.
 
 
 ### Retraining Sherlock
