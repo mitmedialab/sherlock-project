@@ -1,11 +1,9 @@
-#HOW-TO: Environment Setup
-
+# HOW-TO: Environment Setup
 ```
 cd source/private-github/sherlock-project/
 ```
 
-##First time
-
+## First time
 Due to Python dependencies (notably TensorFlow 1.14), we need Python 3.7. More recent versions are likely to have been installed by `brew`, so we need to ensure 3.7 is available and appropriately linked.
 
 ```
@@ -37,10 +35,8 @@ Now activate the new virtual environment as detailed below in *"Activate virtual
 pip install -r requirements.txt
 ```
 
-##Usage
-
-###Activate virtual environment
-
+## Usage
+### Activate virtual environment
 Activate the virtual environment, and you will now see (venv) in front of your prompt:
 
 ```
