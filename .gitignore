@@ -117,3 +117,5 @@ venv.bak/
 
 # MAC OS
 .DS_Store
+
+*.parquet
