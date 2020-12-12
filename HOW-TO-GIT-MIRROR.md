@@ -7,10 +7,10 @@ The creation of this mirror was performed using these [original instructions](ht
 Ongoing top-ups can be made using the following:
 
 ```
-To pull new hotness from the public repo:
+# To pull new hotness from the public repo:
+
 cd private-repo   # i.e. this folder
 git remote add public https://github.com/mitmedialab/sherlock-project.git
 git pull public master # Creates a merge commit
 git push origin master
-****
 ```
