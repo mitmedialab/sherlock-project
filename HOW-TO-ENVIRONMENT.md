@@ -34,6 +34,7 @@ Now activate the new virtual environment as detailed below in *"Activate virtual
 
 pip install -r requirements.txt
 pip install jupyter
+pip install line_profiler
 ```
 
 ## Usage
@@ -48,4 +49,21 @@ source venv/bin/activate
 
 Now launch PyCharm or Jupyter Notebook
 
-```jupyter notebook```
+```
+jupyter notebook
+```
+
+### Profiling code from Jupyter
+
+Within your jupyter notebook, call: `%load_ext line_profiler`
+Profile as follows: 
+
+```
+# usage : note the usage %lprun -f FUNCTION_TO_PROFILE CODE_EXPRESSION_TO_RUN
+          or             %lprun -m MODULE_TO_PROFILE CODE_EXPRESSION_TO_RUN
+# function         
+%lprun -f prof_function prof_function()
+
+# module
+X_test = %lprun -m sherlock.features.preprocessing extract_features(test_samples_converted.head(n=100))
+```
