@@ -2,6 +2,31 @@ import numpy as np
 
 from scipy import stats
 from collections import OrderedDict
+from datetime import datetime
+
+
+word_to_embedding = {}
+
+
+def initialise_word_embeddings():
+    start = datetime.now()
+
+    global word_to_embedding
+
+    print("Initialising word embeddings")
+    word_vectors_f = open('../sherlock/features/glove.6B.50d.txt', encoding='utf-8')
+
+    for w in word_vectors_f:
+        term, vector = w.strip().split(' ', 1)
+        vector = np.array(vector.split(' '), dtype=float)
+        word_to_embedding[term] = vector
+
+    end = datetime.now()
+    x = end - start
+
+    word_vectors_f.close()
+
+    print(f'Initialise Word Embeddings process took {x} seconds.')
 
 
 # Input: a single column in the form of a pandas series
@@ -12,19 +37,14 @@ def extract_word_embeddings_features(values):
     f = OrderedDict()
     embeddings = []
 
-    word_vectors_f = open('../sherlock/features/glove.6B.50d.txt', encoding='utf-8')
-    word_to_embedding = {}
+    global word_to_embedding
 
-    for w in word_vectors_f:
+    if not word_to_embedding:
+        initialise_word_embeddings()
 
-        term, vector = w.strip().split(' ', 1)
-        vector = np.array(vector.split(' '), dtype=float)
-        word_to_embedding[term] = vector
-    
     values = values.dropna()
 
     for v in values:
-
         v = str(v).lower()
 
         if v in word_to_embedding:
@@ -54,7 +74,12 @@ def extract_word_embeddings_features(values):
         mean_embeddings = np.nanmean(embeddings, axis=0)
         med_embeddings = np.nanmedian(embeddings, axis=0)
         std_embeddings = np.nanstd(embeddings, axis=0)
-        mode_embeddings = stats.mode(embeddings, axis=0, nan_policy='omit')[0].flatten()
+
+        # if only one dimension, then mode is equivalent to the embedding data
+        if len(embeddings) == 1:
+            mode_embeddings = embeddings[0]
+        else:
+            mode_embeddings = stats.mode(embeddings, axis=0, nan_policy='omit')[0].flatten()
 
         for i, e in enumerate(mean_embeddings): f['word_embedding_avg_{}'.format(i)] = e
         for i, e in enumerate(std_embeddings): f['word_embedding_std_{}'.format(i)] = e
