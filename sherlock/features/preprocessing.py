@@ -120,6 +120,7 @@ def extract_features(data: Union[pd.DataFrame, pd.Series]) -> pd.DataFrame:
     df_par = pd.DataFrame()
     n_samples = 1000
     vec_dim = 400
+    reuse_model = False
     i = 0
     for raw_sample in data:
 
@@ -142,7 +143,7 @@ def extract_features(data: Union[pd.DataFrame, pd.Series]) -> pd.DataFrame:
         f = OrderedDict(characters_features + embeddings_features + words_features)
         features_list.append(f)
 
-        df_par = df_par.append(infer_paragraph_embeddings_features(raw_sample, vec_dim))
+        df_par = df_par.append(infer_paragraph_embeddings_features(raw_sample, vec_dim, reuse_model))
 
     return pd.concat(
         [pd.DataFrame(features_list).reset_index(drop=True), df_par.reset_index(drop=True)],
