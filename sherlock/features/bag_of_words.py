@@ -15,14 +15,13 @@ def extract_bag_of_words_features(data_no_null, n_val):
     
     f = OrderedDict()
     
-    #n_val = data.size
-    
-    if not n_val: return
+    if not n_val:
+        return
     
     # Entropy of column
     freq_dist = nltk.FreqDist(data_no_null)
     probs = [freq_dist.freq(l) for l in freq_dist]
-    f['col_entropy'] = -sum(p * math.log(p,2) for p in probs)
+    f['col_entropy'] = -sum(p * math.log(p, 2) for p in probs)
 
     # Fraction of cells with unique content
     num_unique = data_no_null.nunique()
@@ -36,27 +35,33 @@ def extract_bag_of_words_features(data_no_null, n_val):
     
     # Average + std number of numeric tokens in cells
     num_reg = '[0-9]'
-    f['avg_num_cells'] = np.mean(data_no_null.str.count(num_reg))
-    f['std_num_cells'] = np.std(data_no_null.str.count(num_reg))
-    
+    num_result = data_no_null.str.count(num_reg)
+
+    f['avg_num_cells'] = np.mean(num_result)
+    f['std_num_cells'] = np.std(num_result)
+
     # Average + std number of textual tokens in cells
     text_reg = '[a-z]|[A-Z]'
-    f['avg_text_cells'] = np.mean(data_no_null.str.count(text_reg))
-    f['std_text_cells'] = np.std(data_no_null.str.count(text_reg))
-    
+    text_result = data_no_null.str.count(text_reg)
+
+    f['avg_text_cells'] = np.mean(text_result)
+    f['std_text_cells'] = np.std(text_result)
+
     # Average + std number of special characters in each cell
     spec_reg = '[[!@#$%^&*(),.?":{}|<>]]'
-    f['avg_spec_cells'] = np.mean(data_no_null.str.count(spec_reg))
-    f['std_spec_cells'] = np.std(data_no_null.str.count(spec_reg))
-    
+    spec_result = data_no_null.str.count(spec_reg)
+
+    f['avg_spec_cells'] = np.mean(spec_result)
+    f['std_spec_cells'] = np.std(spec_result)
+
     # Average number of words in each cell
     space_reg = '[" "]'
-    f['avg_word_cells'] = np.mean(data_no_null.str.count(space_reg) + 1)
-    f['std_word_cells'] = np.std(data_no_null.str.count(space_reg) + 1)
+    space_result = data_no_null.str.count(space_reg) + 1
+
+    f['avg_word_cells'] = np.mean(space_result)
+    f['std_word_cells'] = np.std(space_result)
 
     all_value_features = OrderedDict()
-
-    data_no_null = data_no_null.dropna()
 
     f['n_values'] = n_val
 
@@ -68,14 +73,14 @@ def extract_bag_of_words_features(data_no_null, n_val):
         if has_any:
             f[value_feature_name + '-agg-any'] = has_any
             f[value_feature_name + '-agg-all'] = all(value_features)
-            f[value_feature_name + '-agg-mean'] = np.mean(value_features)
-            f[value_feature_name + '-agg-var'] = np.var(value_features)
-            f[value_feature_name + '-agg-min'] = np.min(value_features)
-            f[value_feature_name + '-agg-max'] = np.max(value_features)
-            f[value_feature_name + '-agg-median'] = np.median(value_features)
-            f[value_feature_name + '-agg-sum'] = np.sum(value_features)
-            f[value_feature_name + '-agg-kurtosis'] = kurtosis(value_features)
-            f[value_feature_name + '-agg-skewness'] = skew(value_features)
+            f[value_feature_name + '-agg-mean'] = np.float64(np.mean(value_features))
+            f[value_feature_name + '-agg-var'] = np.float64(np.var(value_features))
+            f[value_feature_name + '-agg-min'] = np.float64(np.min(value_features))
+            f[value_feature_name + '-agg-max'] = np.float64(np.max(value_features))
+            f[value_feature_name + '-agg-median'] = np.float64(np.median(value_features))
+            f[value_feature_name + '-agg-sum'] = np.float64(np.sum(value_features))
+            f[value_feature_name + '-agg-kurtosis'] = np.float64(kurtosis(value_features))
+            f[value_feature_name + '-agg-skewness'] = np.float64(skew(value_features))
         else:
             f[value_feature_name + '-agg-any'] = False
             f[value_feature_name + '-agg-all'] = False
