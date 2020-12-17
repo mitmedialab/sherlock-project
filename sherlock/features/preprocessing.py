@@ -136,9 +136,11 @@ def extract_features(data: Union[pd.DataFrame, pd.Series]) -> pd.DataFrame:
         random.seed(13)
         raw_sample = pd.Series(random.choices(raw_sample, k=n_samples)).astype(str)
 
-        characters_features = list(extract_bag_of_characters_features(raw_sample).items())
-        embeddings_features = list(extract_word_embeddings_features(raw_sample).items())
-        words_features = list(extract_bag_of_words_features(raw_sample, n_values).items())
+        data_no_null = raw_sample.dropna()
+
+        characters_features = list(extract_bag_of_characters_features(data_no_null).items())
+        embeddings_features = list(extract_word_embeddings_features(data_no_null).items())
+        words_features = list(extract_bag_of_words_features(data_no_null, n_values).items())
 
         f = OrderedDict(characters_features + embeddings_features + words_features)
         features_list.append(f)

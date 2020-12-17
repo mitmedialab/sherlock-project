@@ -31,7 +31,7 @@ def initialise_word_embeddings():
 
 # Input: a single column in the form of a pandas series
 # Output: ordered dictionary holding word embedding features
-def extract_word_embeddings_features(values):
+def extract_word_embeddings_features(data_no_null):
 
     num_embeddings = 50
     f = OrderedDict()
@@ -42,9 +42,7 @@ def extract_word_embeddings_features(values):
     if not word_to_embedding:
         initialise_word_embeddings()
 
-    values = values.dropna()
-
-    for v in values:
+    for v in data_no_null:
         v = str(v).lower()
 
         if v in word_to_embedding:
