@@ -5,6 +5,10 @@ from scipy.stats import skew, kurtosis
 from collections import OrderedDict
 
 
+ZERO_FLOAT64 = np.float64(0)
+DEFAULT_KURTOSIS_FLOAT64 = np.float64(-3.0)
+
+
 # Input: a single column in the form of a pandas series
 # Output: ordered dictionary holding bag of words features
 def extract_bag_of_words_features(data_no_null, n_val):
@@ -59,16 +63,30 @@ def extract_bag_of_words_features(data_no_null, n_val):
     all_value_features['length'] = data_no_null.apply(len)
 
     for value_feature_name, value_features in all_value_features.items():
-        f['{}-agg-any'.format(value_feature_name)] = any(value_features)
-        f['{}-agg-all'.format(value_feature_name)] = all(value_features)
-        f['{}-agg-mean'.format(value_feature_name)] = np.mean(value_features)
-        f['{}-agg-var'.format(value_feature_name)] = np.var(value_features)
-        f['{}-agg-min'.format(value_feature_name)] = np.min(value_features)
-        f['{}-agg-max'.format(value_feature_name)] = np.max(value_features)
-        f['{}-agg-median'.format(value_feature_name)] = np.median(value_features)
-        f['{}-agg-sum'.format(value_feature_name)] = np.sum(value_features)
-        f['{}-agg-kurtosis'.format(value_feature_name)] = kurtosis(value_features)
-        f['{}-agg-skewness'.format(value_feature_name)] = skew(value_features)
+        has_any = any(value_features)
+
+        if has_any:
+            f[value_feature_name + '-agg-any'] = has_any
+            f[value_feature_name + '-agg-all'] = all(value_features)
+            f[value_feature_name + '-agg-mean'] = np.mean(value_features)
+            f[value_feature_name + '-agg-var'] = np.var(value_features)
+            f[value_feature_name + '-agg-min'] = np.min(value_features)
+            f[value_feature_name + '-agg-max'] = np.max(value_features)
+            f[value_feature_name + '-agg-median'] = np.median(value_features)
+            f[value_feature_name + '-agg-sum'] = np.sum(value_features)
+            f[value_feature_name + '-agg-kurtosis'] = kurtosis(value_features)
+            f[value_feature_name + '-agg-skewness'] = skew(value_features)
+        else:
+            f[value_feature_name + '-agg-any'] = False
+            f[value_feature_name + '-agg-all'] = False
+            f[value_feature_name + '-agg-mean'] = ZERO_FLOAT64
+            f[value_feature_name + '-agg-var'] = ZERO_FLOAT64
+            f[value_feature_name + '-agg-min'] = ZERO_FLOAT64
+            f[value_feature_name + '-agg-max'] = ZERO_FLOAT64
+            f[value_feature_name + '-agg-median'] = ZERO_FLOAT64
+            f[value_feature_name + '-agg-sum'] = ZERO_FLOAT64
+            f[value_feature_name + '-agg-kurtosis'] = DEFAULT_KURTOSIS_FLOAT64
+            f[value_feature_name + '-agg-skewness'] = ZERO_FLOAT64
 
     n_none = data_no_null.size - data_no_null.size - len([e for e in data_no_null if e == ''])
     f['none-agg-has'] = n_none > 0
