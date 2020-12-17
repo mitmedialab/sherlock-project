@@ -5,7 +5,6 @@ import os
 from typing import Union
 
 from google_drive_downloader import GoogleDriveDownloader as gd
-import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
@@ -120,7 +119,7 @@ def extract_features(data: Union[pd.DataFrame, pd.Series]) -> pd.DataFrame:
     df_par = pd.DataFrame()
     n_samples = 1000
     vec_dim = 400
-    reuse_model = False
+    reuse_model = True
     i = 0
     for raw_sample in data:
 
@@ -142,7 +141,16 @@ def extract_features(data: Union[pd.DataFrame, pd.Series]) -> pd.DataFrame:
         embeddings_features = list(extract_word_embeddings_features(data_no_null).items())
         words_features = list(extract_bag_of_words_features(data_no_null, n_values).items())
 
-        f = OrderedDict(characters_features + embeddings_features + words_features)
+        f_source = OrderedDict()
+        f_source['source'] = '\\;'.join(raw_sample.str.join(''))
+
+        # s = f_source['source']
+        # print(f'{i} "{s}"')
+
+        source_features = list(f_source.items())
+
+        f = OrderedDict(source_features + characters_features + embeddings_features + words_features)
+
         features_list.append(f)
 
         df_par = df_par.append(infer_paragraph_embeddings_features(raw_sample, vec_dim, reuse_model))

@@ -44,6 +44,7 @@ def initialise_pretrained_model(dim):
     start = datetime.now()
     global model
     model = Doc2Vec.load('../sherlock/features/par_vec_trained_{}.pkl'.format(dim))
+    model.delete_temporary_training_data(keep_doctags_vectors=True, keep_inference=True)
     print(f'Initialise Doc2Vec Model, {dim} dim, process took {datetime.now() - start} seconds.')
 
 
@@ -63,6 +64,11 @@ def infer_paragraph_embeddings_features(data, dim, reuse_model):
         vec = random.sample(data, 1000)
     else:
         vec = data
+
+    # Resetting the random seed before inference keeps the inference vectors deterministic. Gensim uses random values
+    # in the inference process, so setting the seed just before hand makes the inference repeatable.
+    # https://github.com/RaRe-Technologies/gensim/issues/447
+    model.random.seed(13)
 
     # Infer paragraph vector for data sample
     inferred = model.infer_vector(vec, steps=20, alpha=0.025)
