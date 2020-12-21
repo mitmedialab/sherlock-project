@@ -33,8 +33,7 @@ Now activate the new virtual environment as detailed below in *"Activate virtual
 python3.7 -m pip install --upgrade pip
 
 pip install -r requirements.txt
-pip install jupyter
-pip install line_profiler
+pip install jupyter line_profiler pandarallel
 ```
 
 ## Usage
