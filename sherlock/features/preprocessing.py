@@ -3,10 +3,12 @@ from collections import OrderedDict
 import random
 import os
 from typing import Union
+import csv
 
 from google_drive_downloader import GoogleDriveDownloader as gd
 import pandas as pd
 from tqdm import tqdm
+from pandarallel import pandarallel
 
 from sherlock.features.bag_of_characters import extract_bag_of_characters_features
 from sherlock.features.bag_of_words import extract_bag_of_words_features
@@ -81,10 +83,12 @@ def convert_string_lists_to_lists(
         List with labels.
     """
     tqdm.pandas()
+
+    pandarallel.initialize()
     
     if isinstance(data, pd.DataFrame):
         if data_column_name is None: raise ValueError("Missing column name of data.")
-        converted_data = data[data_column_name].progress_apply(literal_eval)
+        converted_data = data[data_column_name].parallel_apply(literal_eval)
     elif isinstance(data, pd.Series):
         converted_data = data.progress_apply(literal_eval)
     else:
@@ -101,62 +105,74 @@ def convert_string_lists_to_lists(
     return converted_data, converted_labels
 
 
-def extract_features(data: Union[pd.DataFrame, pd.Series]) -> pd.DataFrame:
+def extract_features(output_filename, data: Union[pd.DataFrame, pd.Series]) -> pd.DataFrame:
     """Extract features from raw data.
     
     Parameters
     ----------
+    output_filename
+        filename to output featurized column samples
     data
         A pandas DataFrame or Series with each row a list of string values.
-        
-    Returns
-    -------
-    DataFrame with featurized column samples.
     """
-    prepare_feature_extraction()
-
-    features_list = []
-    df_par = pd.DataFrame()
     n_samples = 1000
     vec_dim = 400
     reuse_model = True
-    i = 0
-    for raw_sample in data:
+    verify_keys = False
 
-        i = i + 1
-        if i % 100 == 0:
-            print(f"Extracting features for data column: {i}")
+    first_keys = None
 
-        n_values = len(raw_sample)
+    with open(output_filename, "w") as outfile:
+        csvwriter = csv.writer(outfile)
 
-        if n_samples > n_values:
-            n_samples = n_values
+        for raw_sample in tqdm(data, desc='Extracting Features'):
+            n_values = len(raw_sample)
 
-        random.seed(13)
-        raw_sample = pd.Series(random.choices(raw_sample, k=n_samples)).astype(str)
+            if n_samples > n_values:
+                n_samples = n_values
 
-        data_no_null = raw_sample.dropna()
+            random.seed(13)
+            raw_sample = pd.Series(random.choices(raw_sample, k=n_samples)).astype(str)
 
-        characters_features = list(extract_bag_of_characters_features(data_no_null).items())
-        embeddings_features = list(extract_word_embeddings_features(data_no_null).items())
-        words_features = list(extract_bag_of_words_features(data_no_null, n_values).items())
+            # f_source = OrderedDict()
+            # f_source['source'] = '\\;'.join(raw_sample.str.join(''))
+            #
+            # s = f_source['source']
+            # print(f'{i} "{s}"')
+            #
+            # source_features = list(f_source.items())
+            #
 
-        f_source = OrderedDict()
-        f_source['source'] = '\\;'.join(raw_sample.str.join(''))
+            data_no_null = raw_sample.dropna()
 
-        # s = f_source['source']
-        # print(f'{i} "{s}"')
+            characters_features = list(extract_bag_of_characters_features(data_no_null).items())
+            embeddings_features = list(extract_word_embeddings_features(data_no_null).items())
+            words_features = list(extract_bag_of_words_features(data_no_null, n_values).items())
 
-        source_features = list(f_source.items())
+            # TODO use data_no_null version?
+            paragraph_features = list(infer_paragraph_embeddings_features(raw_sample, vec_dim, reuse_model).items())
 
-        f = OrderedDict(source_features + characters_features + embeddings_features + words_features)
+            # f = OrderedDict(source_features + characters_features + embeddings_features + words_features + paragraph_features)
+            f = OrderedDict(words_features + embeddings_features + characters_features + paragraph_features)
 
-        features_list.append(f)
+            if first_keys is None:
+                first_keys = f.keys()
+                first_keys_str = ','.join(f.keys())
 
-        df_par = df_par.append(infer_paragraph_embeddings_features(raw_sample, vec_dim, reuse_model))
+                print(f'Exporting {len(first_keys)} column features')
 
-    return pd.concat(
-        [pd.DataFrame(features_list).reset_index(drop=True), df_par.reset_index(drop=True)],
-        axis=1,
-        sort=False
-    )
+                csvwriter.writerow(first_keys)
+            elif verify_keys:
+                keys = ','.join(f.keys())
+                if first_keys_str != keys:
+                    key_list = list(f.keys())
+
+                    print(f'keys are NOT equal. k1 len={len(first_keys)}, k2 len={len(keys)}')
+
+                    for idx, k1 in enumerate(first_keys):
+                        k2 = key_list[idx]
+
+                        if k1 != k2:
+                            print(f'{k1} != {k2}')
+
+            csvwriter.writerow(list(f.values()))

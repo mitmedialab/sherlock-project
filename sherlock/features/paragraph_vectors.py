@@ -1,7 +1,7 @@
-import pandas as pd
 import random
 import multiprocessing
 import gensim.models.doc2vec
+from collections import OrderedDict
 
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from datetime import datetime
@@ -29,7 +29,7 @@ def tagcol_paragraph_embeddings_features(train_data):
 def train_paragraph_embeddings_features(columns, dim):
 
     # Train Doc2Vec model
-    model = Doc2Vec(columns, dm=0, negative=3, workers=8, vector_size=dim, epochs=20, min_count=2, seed=13)
+    model = Doc2Vec(columns, dm=0, negative=3, workers=multiprocessing.cpu_count(), vector_size=dim, epochs=20, min_count=2, seed=13)
 
     # Save trained model
     model_file = '../sherlock/features/par_vec_retrained_{}.pkl'.format(dim)
@@ -57,8 +57,6 @@ def infer_paragraph_embeddings_features(data, dim, reuse_model):
         # Load pretrained paragraph vector model
         initialise_pretrained_model(dim)
 
-    f = pd.DataFrame()
-
     if len(data) > 1000:
         random.seed(13)
         vec = random.sample(data, 1000)
@@ -72,12 +70,12 @@ def infer_paragraph_embeddings_features(data, dim, reuse_model):
 
     # Infer paragraph vector for data sample
     inferred = model.infer_vector(vec, steps=20, alpha=0.025)
-    f = f.append(pd.Series(inferred), ignore_index=True)
 
-    col_names = []
-    for i, col in enumerate(f):
-        col_names.append('par_vec_{}'.format(i))
+    f = OrderedDict()
+    i = 0
 
-    f.columns = col_names
+    for v in inferred:
+        f['par_vec_{}'.format(i)] = v
+        i = i + 1
 
     return f

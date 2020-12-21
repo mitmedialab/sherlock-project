@@ -59,12 +59,11 @@ def extract_word_embeddings_features(data_no_null):
                 embeddings.append(mean_of_word_embeddings)
 
     if len(embeddings) == 0:
-        for i in range(num_embeddings):
-            s = str(i)
-            f['word_embedding_avg_' + s] = np.nan
-            f['word_embedding_std_' + s] = np.nan
-            f['word_embedding_med_' + s] = np.nan
-            f['word_embedding_mode_' + s] = np.nan
+        # need to maintain same insertion order as the other case, hence running for loop per feature
+        for i in range(num_embeddings): f[f'word_embedding_avg_{i}'] = np.nan
+        for i in range(num_embeddings): f[f'word_embedding_std_{i}'] = np.nan
+        for i in range(num_embeddings): f[f'word_embedding_med_{i}'] = np.nan
+        for i in range(num_embeddings): f[f'word_embedding_mode_{i}'] = np.nan
 
         f['word_embedding_feature'] = 0
 
