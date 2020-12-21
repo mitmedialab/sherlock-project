@@ -30,7 +30,7 @@ python3 -m venv venv
 Now activate the new virtual environment as detailed below in *"Activate virtual environment"*
 
 ```
-/Users/lowecg/source/private-github/sherlock-project/venv/bin/python3.7 -m pip install --upgrade pip
+python3.7 -m pip install --upgrade pip
 
 pip install -r requirements.txt
 pip install jupyter
