@@ -41,7 +41,7 @@ def extract_features(series: pd.Series):
 
     extract_bag_of_characters_features(series, features)
     extract_word_embeddings_features(series, features)
-    extract_bag_of_words_features(series, series.count(), features)
+    extract_bag_of_words_features(series, features, series.count())
     infer_paragraph_embeddings_features(series, features, dim=400, reuse_model=True)
 
     return features

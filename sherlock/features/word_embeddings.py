@@ -29,17 +29,17 @@ def initialise_word_embeddings():
     print(f'Initialise Word Embeddings process took {x} seconds.')
 
 
-def extract_word_embeddings_features(data_no_null: pd.Series):
+def extract_word_embeddings_features(series: pd.Series):
     features = OrderedDict()
 
-    extract_word_embeddings_features(data_no_null, features)
+    extract_word_embeddings_features(series, features)
 
     return features
 
 
 # Input: a single column in the form of a pandas series
 # Output: ordered dictionary holding word embedding features
-def extract_word_embeddings_features(data_no_null: pd.Series, f: OrderedDict):
+def extract_word_embeddings_features(series: pd.Series, features: OrderedDict):
 
     num_embeddings = 50
 
@@ -50,7 +50,7 @@ def extract_word_embeddings_features(data_no_null: pd.Series, f: OrderedDict):
     if not word_to_embedding:
         initialise_word_embeddings()
 
-    for v in data_no_null:
+    for v in series:
         v = str(v).lower()
 
         if v in word_to_embedding:
@@ -68,14 +68,14 @@ def extract_word_embeddings_features(data_no_null: pd.Series, f: OrderedDict):
 
     if len(embeddings) == 0:
         # need to maintain same insertion order as the other case, hence running for loop per feature
-        for i in range(num_embeddings): f[f'word_embedding_avg_{i}'] = np.nan
-        for i in range(num_embeddings): f[f'word_embedding_std_{i}'] = np.nan
-        for i in range(num_embeddings): f[f'word_embedding_med_{i}'] = np.nan
-        for i in range(num_embeddings): f[f'word_embedding_mode_{i}'] = np.nan
+        for i in range(num_embeddings): features[f'word_embedding_avg_{i}'] = np.nan
+        for i in range(num_embeddings): features[f'word_embedding_std_{i}'] = np.nan
+        for i in range(num_embeddings): features[f'word_embedding_med_{i}'] = np.nan
+        for i in range(num_embeddings): features[f'word_embedding_mode_{i}'] = np.nan
 
-        f['word_embedding_feature'] = 0
+        features['word_embedding_feature'] = 0
 
-        return f
+        return features
 
     else:
         mean_embeddings = np.nanmean(embeddings, axis=0)
@@ -88,9 +88,9 @@ def extract_word_embeddings_features(data_no_null: pd.Series, f: OrderedDict):
         else:
             mode_embeddings = stats.mode(embeddings, axis=0, nan_policy='omit')[0].flatten()
 
-        for i, e in enumerate(mean_embeddings): f['word_embedding_avg_{}'.format(i)] = e
-        for i, e in enumerate(std_embeddings): f['word_embedding_std_{}'.format(i)] = e
-        for i, e in enumerate(med_embeddings): f['word_embedding_med_{}'.format(i)] = e
-        for i, e in enumerate(mode_embeddings): f['word_embedding_mode_{}'.format(i)] = e
+        for i, e in enumerate(mean_embeddings): features['word_embedding_avg_{}'.format(i)] = e
+        for i, e in enumerate(std_embeddings): features['word_embedding_std_{}'.format(i)] = e
+        for i, e in enumerate(med_embeddings): features['word_embedding_med_{}'.format(i)] = e
+        for i, e in enumerate(mode_embeddings): features['word_embedding_mode_{}'.format(i)] = e
 
-        f['word_embedding_feature'] = 1
+        features['word_embedding_feature'] = 1

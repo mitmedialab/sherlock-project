@@ -59,18 +59,18 @@ def infer_paragraph_embeddings_features(series: pd.Series, dim, reuse_model):
 
 # Input: a single column in the form of a pandas Series.
 # Output: ordered dictionary holding paragraph vector features
-def infer_paragraph_embeddings_features(data: pd.Series, f: OrderedDict, dim, reuse_model):
+def infer_paragraph_embeddings_features(series: pd.Series, features: OrderedDict, dim, reuse_model):
     global model
 
     if not reuse_model or model is None:
         # Load pretrained paragraph vector model
         initialise_pretrained_model(dim)
 
-    if len(data) > 1000:
+    if len(series) > 1000:
         random.seed(13)
-        vec = random.sample(data, 1000)
+        vec = random.sample(series, 1000)
     else:
-        vec = data
+        vec = series
 
     # Resetting the random seed before inference keeps the inference vectors deterministic. Gensim uses random values
     # in the inference process, so setting the seed just before hand makes the inference repeatable.
@@ -83,5 +83,5 @@ def infer_paragraph_embeddings_features(data: pd.Series, f: OrderedDict, dim, re
     i = 0
 
     for v in inferred:
-        f['par_vec_{}'.format(i)] = v
+        features['par_vec_{}'.format(i)] = v
         i = i + 1
