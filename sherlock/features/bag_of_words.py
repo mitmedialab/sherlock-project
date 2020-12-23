@@ -29,8 +29,8 @@ def extract_bag_of_words_features(data_no_null, n_val):
 
     # Fraction of cells with numeric content -> frac text cells doesn't add information
     num_cells = np.sum(data_no_null.str.contains('[0-9]', regex=True))
-    text_cells = np.sum(data_no_null.str.contains('[a-z]|[A-Z]', regex=True))
-    f['frac_numcells']  = num_cells / n_val
+    text_cells = np.sum(data_no_null.str.contains('[a-zA-Z]', regex=True))
+    f['frac_numcells'] = num_cells / n_val
     f['frac_textcells'] = text_cells / n_val
     
     # Average + std number of numeric tokens in cells
@@ -41,21 +41,21 @@ def extract_bag_of_words_features(data_no_null, n_val):
     f['std_num_cells'] = np.std(num_result)
 
     # Average + std number of textual tokens in cells
-    text_reg = '[a-z]|[A-Z]'
+    text_reg = '[a-zA-Z]'
     text_result = data_no_null.str.count(text_reg)
 
     f['avg_text_cells'] = np.mean(text_result)
     f['std_text_cells'] = np.std(text_result)
 
     # Average + std number of special characters in each cell
-    spec_reg = '[[!@#$%^&*(),.?":{}|<>]]'
+    spec_reg = '[\\[!@#$%\\^&*(),.?":{}|<>\\]]'
     spec_result = data_no_null.str.count(spec_reg)
 
     f['avg_spec_cells'] = np.mean(spec_result)
     f['std_spec_cells'] = np.std(spec_result)
 
     # Average number of words in each cell
-    space_reg = '[" "]'
+    space_reg = '[\\s]'
     space_result = data_no_null.str.count(space_reg) + 1
 
     f['avg_word_cells'] = np.mean(space_result)
