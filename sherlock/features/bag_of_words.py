@@ -3,18 +3,25 @@ import nltk
 import numpy as np
 from scipy.stats import skew, kurtosis
 from collections import OrderedDict
+import pandas as pd
 
 
 ZERO_FLOAT64 = np.float64(0)
 DEFAULT_KURTOSIS_FLOAT64 = np.float64(-3.0)
 
 
+def extract_bag_of_words_features(data_no_null: pd.Series, n_val):
+    features = OrderedDict()
+
+    extract_bag_of_words_features(data_no_null, n_val, features)
+
+    return features
+
+
 # Input: a single column in the form of a pandas series
 # Output: ordered dictionary holding bag of words features
-def extract_bag_of_words_features(data_no_null, n_val):
-    
-    f = OrderedDict()
-    
+def extract_bag_of_words_features(data_no_null: pd.Series, n_val, f: OrderedDict):
+
     if not n_val:
         return
     

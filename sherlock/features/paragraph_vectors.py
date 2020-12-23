@@ -2,6 +2,7 @@ import random
 import multiprocessing
 import gensim.models.doc2vec
 from collections import OrderedDict
+import pandas as pd
 
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from datetime import datetime
@@ -48,9 +49,17 @@ def initialise_pretrained_model(dim):
     print(f'Initialise Doc2Vec Model, {dim} dim, process took {datetime.now() - start} seconds.')
 
 
+def infer_paragraph_embeddings_features(series: pd.Series, dim, reuse_model):
+    features = OrderedDict()
+
+    infer_paragraph_embeddings_features(series, features, dim, reuse_model)
+
+    return features
+
+
 # Input: a single column in the form of a pandas Series.
 # Output: ordered dictionary holding paragraph vector features
-def infer_paragraph_embeddings_features(data, dim, reuse_model):
+def infer_paragraph_embeddings_features(data: pd.Series, f: OrderedDict, dim, reuse_model):
     global model
 
     if not reuse_model or model is None:
@@ -71,11 +80,8 @@ def infer_paragraph_embeddings_features(data, dim, reuse_model):
     # Infer paragraph vector for data sample
     inferred = model.infer_vector(vec, steps=20, alpha=0.025)
 
-    f = OrderedDict()
     i = 0
 
     for v in inferred:
         f['par_vec_{}'.format(i)] = v
         i = i + 1
-
-    return f

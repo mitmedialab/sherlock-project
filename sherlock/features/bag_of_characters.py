@@ -16,9 +16,17 @@ ZERO_FLOAT64 = np.float64(0)
 DEFAULT_KURTOSIS_FLOAT64 = np.float64(-3.0)
 
 
+def extract_bag_of_characters_features(data_no_null: pd.Series):
+    f = OrderedDict()
+
+    extract_bag_of_characters_features(data_no_null, f)
+
+    return f
+
+
 # Input: a single column in the form of pandas series
 # Output: ordered dictionary holding bag of character features
-def extract_bag_of_characters_features(data_no_null):
+def extract_bag_of_characters_features(data_no_null: pd.Series, f: OrderedDict):
     all_value_features = OrderedDict()
 
     # Create a set of unique chars from the string vectors to quickly test whether to perform expensive
@@ -30,8 +38,6 @@ def extract_bag_of_characters_features(data_no_null):
             all_value_features['n_' + c] = data_no_null.str.count(c)
         else:
             all_value_features['n_' + c] = ZERO_SERIES
-
-    f = OrderedDict()
 
     for value_feature_name, value_features in all_value_features.items():
         if value_features.name == 'Empty':

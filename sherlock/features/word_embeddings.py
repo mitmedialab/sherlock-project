@@ -3,7 +3,7 @@ import numpy as np
 from scipy import stats
 from collections import OrderedDict
 from datetime import datetime
-
+import pandas as pd
 
 word_to_embedding = {}
 
@@ -29,12 +29,20 @@ def initialise_word_embeddings():
     print(f'Initialise Word Embeddings process took {x} seconds.')
 
 
+def extract_word_embeddings_features(data_no_null: pd.Series):
+    features = OrderedDict()
+
+    extract_word_embeddings_features(data_no_null, features)
+
+    return features
+
+
 # Input: a single column in the form of a pandas series
 # Output: ordered dictionary holding word embedding features
-def extract_word_embeddings_features(data_no_null):
+def extract_word_embeddings_features(data_no_null: pd.Series, f: OrderedDict):
 
     num_embeddings = 50
-    f = OrderedDict()
+
     embeddings = []
 
     global word_to_embedding
@@ -86,5 +94,3 @@ def extract_word_embeddings_features(data_no_null):
         for i, e in enumerate(mode_embeddings): f['word_embedding_mode_{}'.format(i)] = e
 
         f['word_embedding_feature'] = 1
-
-        return f
