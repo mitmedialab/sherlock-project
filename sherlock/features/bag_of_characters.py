@@ -8,8 +8,8 @@ from re import search
 ZERO_SERIES = pd.Series([0], name='Empty')
 
 CHARACTERS_TO_CHECK = (
-        ['[' + c + ']' for c in string.printable if c not in ('\n', '\\', '\v', '\r', '\t', '^')]
-        + ['[\\\\]', '[\\^]']
+        ['[' + c + ']' for c in string.printable if c not in ('\n', '\\', '\v', '\r', '\t', '^', '[', ']')]
+        + ['[\\\\]', '[\\^]', '[\\[]', '[\\]]']
 )
 
 ZERO_FLOAT64 = np.float64(0)
