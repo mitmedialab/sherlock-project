@@ -73,23 +73,23 @@ def extract_bag_of_words_features(data_no_null, n_val):
         if has_any:
             f[value_feature_name + '-agg-any'] = has_any
             f[value_feature_name + '-agg-all'] = all(value_features)
-            f[value_feature_name + '-agg-mean'] = np.float64(np.mean(value_features))
-            f[value_feature_name + '-agg-var'] = np.float64(np.var(value_features))
-            f[value_feature_name + '-agg-min'] = np.float64(np.min(value_features))
-            f[value_feature_name + '-agg-max'] = np.float64(np.max(value_features))
-            f[value_feature_name + '-agg-median'] = np.float64(np.median(value_features))
-            f[value_feature_name + '-agg-sum'] = np.float64(np.sum(value_features))
-            f[value_feature_name + '-agg-kurtosis'] = np.float64(kurtosis(value_features))
-            f[value_feature_name + '-agg-skewness'] = np.float64(skew(value_features))
+            f[value_feature_name + '-agg-mean'] = np.mean(value_features)
+            f[value_feature_name + '-agg-var'] = np.var(value_features)
+            f[value_feature_name + '-agg-min'] = np.min(value_features)
+            f[value_feature_name + '-agg-max'] = np.max(value_features)
+            f[value_feature_name + '-agg-median'] = np.median(value_features)
+            f[value_feature_name + '-agg-sum'] = np.sum(value_features)
+            f[value_feature_name + '-agg-kurtosis'] = kurtosis(value_features)
+            f[value_feature_name + '-agg-skewness'] = skew(value_features)
         else:
             f[value_feature_name + '-agg-any'] = False
             f[value_feature_name + '-agg-all'] = False
             f[value_feature_name + '-agg-mean'] = ZERO_FLOAT64
             f[value_feature_name + '-agg-var'] = ZERO_FLOAT64
-            f[value_feature_name + '-agg-min'] = ZERO_FLOAT64
-            f[value_feature_name + '-agg-max'] = ZERO_FLOAT64
-            f[value_feature_name + '-agg-median'] = ZERO_FLOAT64
-            f[value_feature_name + '-agg-sum'] = ZERO_FLOAT64
+            f[value_feature_name + '-agg-min'] = 0
+            f[value_feature_name + '-agg-max'] = 0
+            f[value_feature_name + '-agg-median'] = 0
+            f[value_feature_name + '-agg-sum'] = 0
             f[value_feature_name + '-agg-kurtosis'] = DEFAULT_KURTOSIS_FLOAT64
             f[value_feature_name + '-agg-skewness'] = ZERO_FLOAT64
 
@@ -98,5 +98,3 @@ def extract_bag_of_words_features(data_no_null, n_val):
     f['none-agg-percent'] = n_none / len(data_no_null)
     f['none-agg-num'] = n_none
     f['none-agg-all'] = (n_none == len(data_no_null))
-    
-    return f
