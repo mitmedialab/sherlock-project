@@ -120,3 +120,4 @@ venv.bak/
 .DS_Store
 
 *.parquet
+tmp
