@@ -32,7 +32,13 @@ Now activate the new virtual environment as detailed below in *"Activate virtual
 ```
 python3.7 -m pip install --upgrade pip
 
-python3.7 -m pip install -U pip wheel setuptools
+python3.7 -m pip install -U pip setuptools
+
+# need specific version of wheel to prevent the following error message:
+# ERROR: tensorflow-1.15.4-cp37-cp37m-macosx_10_15_64bit.whl is not a supported wheel on this platform.
+pip3 install -U wheel==0.34.1
+
+pip3 install --upgrade wheel/tensorflow-1.15.4-cp37-cp37m-macosx_10_15_x86_64.whl
 
 pip install -r requirements.txt
 pip install jupyter line_profiler pandarallel pympler pyfunctional
