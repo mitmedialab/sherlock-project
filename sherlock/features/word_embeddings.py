@@ -68,10 +68,10 @@ def extract_word_embeddings_features(series: pd.Series, features: OrderedDict):
 
     if len(embeddings) == 0:
         # need to maintain same insertion order as the other case, hence running for loop per feature
-        for i in range(num_embeddings): features[f'word_embedding_avg_{i}'] = np.nan
-        for i in range(num_embeddings): features[f'word_embedding_std_{i}'] = np.nan
-        for i in range(num_embeddings): features[f'word_embedding_med_{i}'] = np.nan
-        for i in range(num_embeddings): features[f'word_embedding_mode_{i}'] = np.nan
+        for i in range(num_embeddings): features['word_embedding_avg_' + str(i)] = np.nan
+        for i in range(num_embeddings): features['word_embedding_std_' + str(i)] = np.nan
+        for i in range(num_embeddings): features['word_embedding_med_' + str(i)] = np.nan
+        for i in range(num_embeddings): features['word_embedding_mode_' + str(i)] = np.nan
 
         features['word_embedding_feature'] = 0
 
@@ -88,9 +88,9 @@ def extract_word_embeddings_features(series: pd.Series, features: OrderedDict):
         else:
             mode_embeddings = stats.mode(embeddings, axis=0, nan_policy='omit')[0].flatten()
 
-        for i, e in enumerate(mean_embeddings): features['word_embedding_avg_{}'.format(i)] = e
-        for i, e in enumerate(std_embeddings): features['word_embedding_std_{}'.format(i)] = e
-        for i, e in enumerate(med_embeddings): features['word_embedding_med_{}'.format(i)] = e
-        for i, e in enumerate(mode_embeddings): features['word_embedding_mode_{}'.format(i)] = e
+        for i, e in enumerate(mean_embeddings): features['word_embedding_avg_' + str(i)] = e
+        for i, e in enumerate(std_embeddings): features['word_embedding_std_' + str(i)] = e
+        for i, e in enumerate(med_embeddings): features['word_embedding_med_' + str(i)] = e
+        for i, e in enumerate(mode_embeddings): features['word_embedding_mode_' + str(i)] = e
 
         features['word_embedding_feature'] = 1
