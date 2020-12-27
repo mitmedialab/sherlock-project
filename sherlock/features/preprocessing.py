@@ -145,15 +145,14 @@ def extract_features(output_filename, data: Union[pd.DataFrame, pd.Series]) -> p
 
             data_no_null = raw_sample.dropna()
 
-            characters_features = list(extract_bag_of_characters_features(data_no_null).items())
-            embeddings_features = list(extract_word_embeddings_features(data_no_null).items())
-            words_features = list(extract_bag_of_words_features(data_no_null, n_samples).items())
+            f = OrderedDict()
+
+            extract_bag_of_characters_features(data_no_null, f)
+            extract_word_embeddings_features(data_no_null, f)
+            extract_bag_of_words_features(data_no_null, f, n_samples)
 
             # TODO use data_no_null version?
-            paragraph_features = list(infer_paragraph_embeddings_features(raw_sample, vec_dim, reuse_model).items())
-
-            # f = OrderedDict(source_features + characters_features + embeddings_features + words_features + paragraph_features)
-            f = OrderedDict(words_features + embeddings_features + characters_features + paragraph_features)
+            infer_paragraph_embeddings_features(raw_sample, f, vec_dim, reuse_model)
 
             if first_keys is None:
                 first_keys = f.keys()
