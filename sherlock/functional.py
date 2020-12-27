@@ -2,6 +2,7 @@ from ast import literal_eval
 import random
 import pandas as pd
 import pyarrow.lib
+import re
 from collections import OrderedDict
 from sherlock.features.bag_of_characters import extract_bag_of_characters_features
 from sherlock.features.bag_of_words import extract_bag_of_words_features
@@ -26,6 +27,21 @@ def randomise_sample(values):
 
     random.seed(13)
     return pd.Series(random.choices(values, k=n_samples))
+
+
+# Clean whitespace from strings by:
+#   * trimming leading and trailing whitespace
+#   * normalising all whitespace to spaces
+#   * reducing whitespace sequences to a single space
+def normalise_whitespace(data):
+    if isinstance(data, str):
+        return re.sub(r'\s{2,}', ' ', data.strip())
+    else:
+        return data
+
+
+def normalise_string_whitespace(series: pd.Series):
+    return series.apply(normalise_whitespace)
 
 
 def as_str_series(series: pd.Series):
