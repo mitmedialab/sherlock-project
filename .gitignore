@@ -121,3 +121,6 @@ venv.bak/
 
 *.parquet
 tmp
+wheel
+*.npy
+retrained*
