@@ -19,14 +19,8 @@ def to_literal(x):
 
 
 def randomise_sample(values):
-    n_samples = 1000
-    n_values = len(values)
-
-    if n_samples > n_values:
-        n_samples = n_values
-
     random.seed(13)
-    return pd.Series(random.choices(values, k=n_samples))
+    return pd.Series(random.sample(values, k=min(1000, len(values))))
 
 
 # Clean whitespace from strings by:
@@ -61,6 +55,31 @@ def extract_features(series: pd.Series):
     infer_paragraph_embeddings_features(series, features, dim=400, reuse_model=True)
 
     return features
+
+
+is_first = True
+
+
+# prints floats without using scientific notation
+# remove small imprecision (7 zeros before last digit) - e.g. ('%.16f' % 1.35)  -> '1.3500000000000001'
+# remove trailing zeros and decimal point
+def normalise_float(value):
+    # return re.sub(r'0{7,}[0-9]$', '', ('%.16f' % value)).rstrip('0').rstrip('.')
+    return '%g' % value
+
+
+def values_to_str(values):
+    return ','.join(map(normalise_float, values))
+
+
+def keys_on_first(od: OrderedDict):
+    global is_first
+
+    if is_first:
+        is_first = False
+        return list(od.keys()), values_to_str(od.values())
+    else:
+        return None, values_to_str(od.values())
 
 
 # Only return OrderedDict.values. Useful in some benchmarking scenarios.

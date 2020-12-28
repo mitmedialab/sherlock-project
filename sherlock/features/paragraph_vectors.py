@@ -3,6 +3,7 @@ import multiprocessing
 import gensim.models.doc2vec
 from collections import OrderedDict
 import pandas as pd
+import numpy as np
 
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from datetime import datetime
@@ -33,7 +34,7 @@ def train_paragraph_embeddings_features(columns, dim):
     model = Doc2Vec(columns, dm=0, negative=3, workers=multiprocessing.cpu_count(), vector_size=dim, epochs=20, min_count=2, seed=13)
 
     # Save trained model
-    model_file = '../sherlock/features/par_vec_retrained_{}.pkl'.format(dim)
+    model_file = f'../sherlock/features/par_vec_retrained_{dim}.pkl'
     model.save(model_file)
     model.delete_temporary_training_data(keep_doctags_vectors=True, keep_inference=True)
 
@@ -45,19 +46,11 @@ def initialise_pretrained_model(dim):
     start = datetime.now()
     global model
 
-    filename = '../sherlock/features/par_vec_trained_{}.pkl'.format(dim)
+    filename = f'../sherlock/features/par_vec_trained_{dim}.pkl'
 
     model = Doc2Vec.load(filename)
     model.delete_temporary_training_data(keep_doctags_vectors=True, keep_inference=True)
     print(f'Initialise Doc2Vec Model, {dim} dim, process took {datetime.now() - start} seconds. (filename = {filename})')
-
-
-def infer_paragraph_embeddings_features(series: pd.Series, dim, reuse_model):
-    features = OrderedDict()
-
-    infer_paragraph_embeddings_features(series, features, dim, reuse_model)
-
-    return features
 
 
 # Input: a single column in the form of a pandas Series.
@@ -69,22 +62,13 @@ def infer_paragraph_embeddings_features(series: pd.Series, features: OrderedDict
         # Load pretrained paragraph vector model
         initialise_pretrained_model(dim)
 
-    if len(series) > 1000:
-        random.seed(13)
-        vec = random.sample(series, 1000)
-    else:
-        vec = series
-
     # Resetting the random seed before inference keeps the inference vectors deterministic. Gensim uses random values
     # in the inference process, so setting the seed just before hand makes the inference repeatable.
     # https://github.com/RaRe-Technologies/gensim/issues/447
     model.random.seed(13)
 
     # Infer paragraph vector for data sample
-    inferred = model.infer_vector(vec, steps=20, alpha=0.025)
+    inferred = model.infer_vector(series, steps=20, alpha=0.025)
 
-    i = 0
-
-    for v in inferred:
-        features['par_vec_{}'.format(i)] = v
-        i = i + 1
+    for idx, v in enumerate(inferred):
+        features['par_vec_' + str(idx)] = v

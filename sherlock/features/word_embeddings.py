@@ -62,6 +62,7 @@ def extract_word_embeddings_features(series: pd.Series, features: OrderedDict):
             for w in words:
                 if w in word_to_embedding:
                     embeddings_to_all_words.append(word_to_embedding.get(w))
+
             if embeddings_to_all_words:
                 mean_of_word_embeddings = np.nanmean(embeddings_to_all_words, axis=0)
                 embeddings.append(mean_of_word_embeddings)

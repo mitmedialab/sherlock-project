@@ -46,27 +46,27 @@ def extract_bag_of_words_features(series: pd.Series, features: OrderedDict, n_va
     
     # Average + std number of numeric tokens in cells
     num_reg = r'[0-9]'
-    num_result = series.str.count(num_reg)
+    num_result = np.array(series.str.count(num_reg))
 
     features['avg_num_cells'] = np.mean(num_result)
     features['std_num_cells'] = np.std(num_result)
 
     # Average + std number of textual tokens in cells
     text_reg = r'[a-zA-Z]'
-    text_result = series.str.count(text_reg)
+    text_result = np.array(series.str.count(text_reg))
 
     features['avg_text_cells'] = np.mean(text_result)
     features['std_text_cells'] = np.std(text_result)
 
     # Average + std number of special characters in each cell
-    spec_result = series.str.count(SPECIAL_CHARACTERS_REGEX)
+    spec_result = np.array(series.str.count(SPECIAL_CHARACTERS_REGEX))
 
     features['avg_spec_cells'] = np.mean(spec_result)
     features['std_spec_cells'] = np.std(spec_result)
 
     # Average number of words in each cell
     words_reg = r'[\w+]'
-    words_result = series.str.count(words_reg)
+    words_result = np.array(series.str.count(words_reg))
 
     features['avg_word_cells'] = np.mean(words_result)
     features['std_word_cells'] = np.std(words_result)
@@ -75,36 +75,36 @@ def extract_bag_of_words_features(series: pd.Series, features: OrderedDict, n_va
 
     features['n_values'] = n_val
 
-    all_value_features['length'] = series.apply(len)
+    all_value_features['length'] = np.array(series.apply(len))
 
     for value_feature_name, value_features in all_value_features.items():
         has_any = any(value_features)
 
         if has_any:
-            features[value_feature_name + '-agg-any'] = has_any
-            features[value_feature_name + '-agg-all'] = all(value_features)
+            features[value_feature_name + '-agg-any'] = 1
+            features[value_feature_name + '-agg-all'] = 1 if all(value_features) else 0
             features[value_feature_name + '-agg-mean'] = float(np.mean(value_features))
             features[value_feature_name + '-agg-var'] = float(np.var(value_features))
             features[value_feature_name + '-agg-min'] = np.min(value_features)
             features[value_feature_name + '-agg-max'] = np.max(value_features)
-            features[value_feature_name + '-agg-median'] = np.median(value_features)
+            features[value_feature_name + '-agg-median'] = float(np.median(value_features))
             features[value_feature_name + '-agg-sum'] = np.sum(value_features)
             features[value_feature_name + '-agg-kurtosis'] = float(kurtosis(value_features))
             features[value_feature_name + '-agg-skewness'] = float(skew(value_features))
         else:
-            features[value_feature_name + '-agg-any'] = False
-            features[value_feature_name + '-agg-all'] = False
+            features[value_feature_name + '-agg-any'] = 0
+            features[value_feature_name + '-agg-all'] = 0
             features[value_feature_name + '-agg-mean'] = 0.0
             features[value_feature_name + '-agg-var'] = 0.0
             features[value_feature_name + '-agg-min'] = 0
             features[value_feature_name + '-agg-max'] = 0
-            features[value_feature_name + '-agg-median'] = 0
+            features[value_feature_name + '-agg-median'] = 0.0
             features[value_feature_name + '-agg-sum'] = 0
             features[value_feature_name + '-agg-kurtosis'] = -3.0
             features[value_feature_name + '-agg-skewness'] = 0.0
 
     n_none = series.size - series.size - len([e for e in series if e == ''])
-    features['none-agg-has'] = n_none > 0
+    features['none-agg-has'] = 1 if n_none > 0 else 0
     features['none-agg-percent'] = n_none / len(series)
     features['none-agg-num'] = n_none
-    features['none-agg-all'] = (n_none == len(series))
+    features['none-agg-all'] = 1 if n_none == len(series) else 0
