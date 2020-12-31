@@ -18,16 +18,19 @@ def escape_for_regex(c):
 
 
 CHARACTERS_TO_CHECK = (
-        ['[' + escape_for_regex(c) + ']' for c in string.printable if c not in ('\n', '\f', '\v', '\r', '\t')]
+        [c for c in string.printable if c not in ('\n', '\f', '\v', '\r', '\t')]
 )
 
 
+# Usage:
+# from sherlock.features.helpers import generate_chars_col
+# generate_chars_col()
 def generate_chars_col():
     idx = 0
     with open("../sherlock/features/feature_column_identifiers/char_col.tsv", "w") as char_col:
         for c in CHARACTERS_TO_CHECK:
             for operation in ('any', 'all', 'mean', 'var', 'min', 'max', 'median', 'sum', 'kurtosis', 'skewness'):
-                col_header = f'n_{c}-agg-{operation}'
+                col_header = f'n_[{c}]-agg-{operation}'
 
                 char_col.write(f'{idx}\t{col_header}\n')
 
