@@ -39,7 +39,7 @@ def normalise_string_whitespace(series: pd.Series):
 
 
 def as_str_series(series: pd.Series):
-    return series.astype(str)
+    return series.apply(lambda s: '' if s is None else str(s))
 
 
 def dropna(series: pd.Series):
