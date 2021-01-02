@@ -103,7 +103,7 @@ KEYS = (
 
 # Input: a single column in the form of a pandas Series.
 # Output: ordered dictionary holding paragraph vector features
-def infer_paragraph_embeddings_features(series: pd.Series, features: OrderedDict, dim, reuse_model):
+def infer_paragraph_embeddings_features(col_values: list, features: OrderedDict, dim, reuse_model):
 
     if not reuse_model or model is None:
         # Load pretrained paragraph vector model
@@ -114,7 +114,7 @@ def infer_paragraph_embeddings_features(series: pd.Series, features: OrderedDict
     # https://github.com/RaRe-Technologies/gensim/issues/447
     model.random.seed(13)
 
-    tokens = tokenise(series)
+    tokens = tokenise(col_values)
 
     # Infer paragraph vector for data sample.
     inferred = model.infer_vector(tokens, steps=20, alpha=0.025)

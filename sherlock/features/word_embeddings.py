@@ -39,7 +39,7 @@ def extract_word_embeddings_features(series: pd.Series):
 
 # Input: a single column in the form of a pandas series
 # Output: ordered dictionary holding word embedding features
-def extract_word_embeddings_features(series: pd.Series, features: OrderedDict):
+def extract_word_embeddings_features(col_values: list, features: OrderedDict):
 
     num_embeddings = 50
 
@@ -50,7 +50,7 @@ def extract_word_embeddings_features(series: pd.Series, features: OrderedDict):
     if not word_to_embedding:
         initialise_word_embeddings()
 
-    for v in series:
+    for v in col_values:
         v = str(v).lower()
 
         if v in word_to_embedding:

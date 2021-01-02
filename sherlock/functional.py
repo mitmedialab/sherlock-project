@@ -8,6 +8,7 @@ from sherlock.features.bag_of_characters import extract_bag_of_characters_featur
 from sherlock.features.bag_of_words import extract_bag_of_words_features
 from sherlock.features.word_embeddings import extract_word_embeddings_features
 from sherlock.features.paragraph_vectors import infer_paragraph_embeddings_features
+from sherlock.features.helpers import literal_eval_as_str
 
 
 def as_py_str(x: pyarrow.lib.StringScalar):
@@ -15,12 +16,12 @@ def as_py_str(x: pyarrow.lib.StringScalar):
 
 
 def to_literal(x):
-    return literal_eval(x)
+    return literal_eval_as_str(x, none_value='')
 
 
-def randomise_sample(values):
+def randomise_sample(values: list):
     random.seed(13)
-    return pd.Series(random.sample(values, k=min(1000, len(values))))
+    return random.sample(values, k=min(1000, len(values)))
 
 
 # Clean whitespace from strings by:
@@ -34,25 +35,17 @@ def normalise_whitespace(data):
         return data
 
 
-def normalise_string_whitespace(series: pd.Series):
-    return series.apply(normalise_whitespace)
+def normalise_string_whitespace(col_values: list):
+    return list(map(normalise_whitespace, col_values))
 
 
-def as_str_series(series: pd.Series):
-    return series.apply(lambda s: '' if s is None else str(s))
-
-
-def dropna(series: pd.Series):
-    return series.dropna()
-
-
-def extract_features(series: pd.Series):
+def extract_features(col_values: list):
     features = OrderedDict()
 
-    extract_bag_of_characters_features(series, features)
-    extract_word_embeddings_features(series, features)
-    extract_bag_of_words_features(series, features, series.count())
-    infer_paragraph_embeddings_features(series, features, dim=400, reuse_model=True)
+    extract_bag_of_characters_features(col_values, features)
+    extract_word_embeddings_features(col_values, features)
+    extract_bag_of_words_features(col_values, features, len(col_values))
+    infer_paragraph_embeddings_features(col_values, features, dim=400, reuse_model=True)
 
     return features
 

@@ -8,6 +8,7 @@ from sherlock.features.helpers import escape_for_regex
 import string
 import re
 from array import array
+import statistics as statistics
 
 
 def extract_bag_of_words_features(series: pd.Series, n_val):
@@ -18,10 +19,10 @@ def extract_bag_of_words_features(series: pd.Series, n_val):
     return features
 
 
-def count_pattern_in_cells(series: pd.Series, pat: re.Pattern):
+def count_pattern_in_cells(values: list, pat: re.Pattern):
     cell_counts = array('i')
     matching_cell_count = 0
-    for s in series:
+    for s in values:
         char_count = len(re.findall(pat, s))
         if char_count > 0:
             matching_cell_count = matching_cell_count + 1
@@ -43,22 +44,22 @@ SPECIAL_CHARACTERS_PATTERN = re.compile(SPECIAL_CHARACTERS_REGEX)
 
 # Input: a single column in the form of a pandas series
 # Output: ordered dictionary holding bag of words features
-def extract_bag_of_words_features(series: pd.Series, features: OrderedDict, n_val):
+def extract_bag_of_words_features(col_values: list, features: OrderedDict, n_val):
     if not n_val:
         return
 
     # Entropy of column
-    freq_dist = nltk.FreqDist(series)
+    freq_dist = nltk.FreqDist(col_values)
     probs = [freq_dist.freq(l) for l in freq_dist]
     features['col_entropy'] = -sum(p * math.log(p, 2) for p in probs)
 
     # Fraction of cells with unique content
-    num_unique = series.nunique()
+    num_unique = len(set(col_values))
     features['frac_unique'] = num_unique / n_val
 
     # Fraction of cells with numeric content -> frac text cells doesn't add information
-    numeric_cell_count, numeric_char_counts = count_pattern_in_cells(series, NUMBER_PATTERN)
-    text_cell_count, text_char_counts = count_pattern_in_cells(series, TEXT_PATTERN)
+    numeric_cell_count, numeric_char_counts = count_pattern_in_cells(col_values, NUMBER_PATTERN)
+    text_cell_count, text_char_counts = count_pattern_in_cells(col_values, TEXT_PATTERN)
 
     features['frac_numcells'] = numeric_cell_count / n_val
     features['frac_textcells'] = text_cell_count / n_val
@@ -72,13 +73,13 @@ def extract_bag_of_words_features(series: pd.Series, features: OrderedDict, n_va
     features['std_text_cells'] = np.std(text_char_counts)
 
     # Average + std number of special characters in each cell
-    spec_cells, spec_char_counts = count_pattern_in_cells(series, SPECIAL_CHARACTERS_PATTERN)
+    spec_cells, spec_char_counts = count_pattern_in_cells(col_values, SPECIAL_CHARACTERS_PATTERN)
 
     features['avg_spec_cells'] = np.mean(spec_char_counts)
     features['std_spec_cells'] = np.std(spec_char_counts)
 
     # Average number of words in each cell
-    word_cells, word_counts = count_pattern_in_cells(series, WORD_PATTERN)
+    word_cells, word_counts = count_pattern_in_cells(col_values, WORD_PATTERN)
 
     features['avg_word_cells'] = np.mean(word_counts)
     features['std_word_cells'] = np.std(word_counts)
@@ -88,7 +89,7 @@ def extract_bag_of_words_features(series: pd.Series, features: OrderedDict, n_va
     lengths = array('i')
 
     n_none = 0
-    for s in series:
+    for s in col_values:
         str_len = len(s)
 
         if str_len == 0:
@@ -99,16 +100,16 @@ def extract_bag_of_words_features(series: pd.Series, features: OrderedDict, n_va
     has_any = any(lengths)
 
     if has_any:
-        _mean, _variance, _skew, _kurtosis = compute_stats(lengths)
+        _mean, _variance, _skew, _kurtosis, _min, _max, _sum = compute_stats(lengths)
 
         features['length-agg-any'] = 1
         features['length-agg-all'] = 1 if all(lengths) else 0
         features['length-agg-mean'] = _mean
         features['length-agg-var'] = _variance
-        features['length-agg-min'] = np.min(lengths)
-        features['length-agg-max'] = np.max(lengths)
-        features['length-agg-median'] = np.median(lengths)
-        features['length-agg-sum'] = np.sum(lengths)
+        features['length-agg-min'] = _min
+        features['length-agg-max'] = _max
+        features['length-agg-median'] = statistics.median(lengths)
+        features['length-agg-sum'] = _sum
         features['length-agg-kurtosis'] = _kurtosis
         features['length-agg-skewness'] = _skew
     else:

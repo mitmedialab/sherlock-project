@@ -35,3 +35,42 @@ def generate_chars_col():
                 char_col.write(f'{idx}\t{col_header}\n')
 
                 idx = idx + 1
+
+
+# Alternative for literal_eval, but keeps the elements as str. This version is about 5x faster than literal_eval
+# in this use case
+# parse arrays in the form "['a value', None, 0.89, "other string"]
+def literal_eval_as_str(value, none_value=None):
+    strings = []
+
+    quote = None
+    s2 = ''
+
+    if len(value) == 0:
+        return strings
+
+    if value[0] == '[':
+        value = value[1:len(value) - 1]
+
+    for s in value.split(', '):
+        if len(s) == 0:
+            strings.append('')
+        elif s[0] in ['"', "'"]:
+            if s[0] == s[len(s) - 1]:
+                strings.append(s[1:len(s) - 1])
+            else:
+                quote = s[0]
+                s2 = s2 + s[1:] + ', '
+        elif not quote is None:
+            if quote == s[len(s) - 1]:
+                quote = None
+                strings.append(s2 + s[:len(s) - 1])
+                s2 = ''
+            else:
+                s2 = s2 + s + ', '
+        elif s == 'None':
+            strings.append(none_value)
+        else:
+            strings.append(s)
+
+    return strings
