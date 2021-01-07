@@ -2,7 +2,7 @@ import unittest
 from unittest import TestCase
 from scipy.stats import skew, kurtosis
 from array import array
-from sherlock.features.stats_helper import compute_stats
+from sherlock.features.stats_helper import compute_stats, mode
 from numpy.testing import assert_array_almost_equal
 import numpy as np
 from timeit import timeit
@@ -89,3 +89,18 @@ class Test(TestCase):
         t2 = timeit(lambda: statistics.median(v), number=10000)
 
         print(f't1={t1}, t2={t2}')
+
+    def test_mode(self):
+        assert 0 == mode([0])
+
+        assert 0 == mode([0, 0, 1])
+
+        assert 1 == mode([0, 1, 1])
+
+        assert 1 == mode([0, 1, 1, 2, 3, 4, 5])
+        assert 1 == mode([0, 1, 1, 2, 3, 4, 5, 5])
+
+        # with equal distribution of values, use first (after sorting)
+        assert 0 == mode([5, 4, 3, 2, 1, 0])
+
+        assert 5 == mode([0, 1, 2, 3, 4, 5, 5])

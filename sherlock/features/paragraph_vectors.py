@@ -8,23 +8,16 @@ from nltk.corpus import stopwords
 
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from datetime import datetime
+from sherlock.global_state import is_first
 
 assert gensim.models.doc2vec.FAST_VERSION > -1, "This will be painfully slow otherwise"
 
 
 def tokenise(values):
-    tokens = []
+    joined = ' '.join(s for s in values if len(s) >= 2)
+    filtered = ''.join(e for e in joined if e.isalnum() or e.isspace()).lower()
 
-    joined = ' '.join(s for s in values if len(s) >= 2).lower()
-    filtered = ''.join(e for e in joined if e.isalnum() or e.isspace())
-
-    for word in nltk.word_tokenize(filtered):
-        if len(word) < 2 or word in STOPWORDS_ENGLISH:
-            continue
-
-        tokens.append(word)
-
-    return tokens
+    return [word for word in nltk.word_tokenize(filtered) if len(word) >= 2 and word not in STOPWORDS_ENGLISH]
 
 
 # Input: a collection of columns stored in a dataframe column 'values'
@@ -53,9 +46,9 @@ def tagcol_paragraph_embeddings_features(train_data: pd.Series, train_labels: li
 # Output: a stored retrained model
 # Only needed for training.
 def train_paragraph_embeddings_features(columns, dim):
-
     # Train Doc2Vec model
-    model = Doc2Vec(columns, dm=0, negative=3, workers=multiprocessing.cpu_count(), vector_size=dim, epochs=20, min_count=2, seed=13)
+    model = Doc2Vec(columns, dm=0, negative=3, workers=multiprocessing.cpu_count(), vector_size=dim, epochs=20,
+                    min_count=2, seed=13)
 
     # Save trained model
     model_file = f'../sherlock/features/par_vec_retrained_{dim}.pkl'
@@ -64,7 +57,7 @@ def train_paragraph_embeddings_features(columns, dim):
 
 
 DIM = 400
-model: Doc2Vec = None
+model: Doc2Vec
 
 
 def initialise_pretrained_model(dim):
@@ -77,7 +70,8 @@ def initialise_pretrained_model(dim):
 
     model = Doc2Vec.load(filename)
     model.delete_temporary_training_data(keep_doctags_vectors=True, keep_inference=True)
-    print(f'Initialise Doc2Vec Model, {dim} dim, process took {datetime.now() - start} seconds. (filename = {filename})')
+    print(
+        f'Initialise Doc2Vec Model, {dim} dim, process took {datetime.now() - start} seconds. (filename = {filename})')
 
 
 STOPWORDS_ENGLISH = None
@@ -96,15 +90,9 @@ def initialise_nltk():
     print(f'Initialised NLTK, process took {datetime.now() - start} seconds.')
 
 
-KEYS = (
-        [f'par_vec_{i}' for i in range(DIM)]
-)
-
-
 # Input: a single column in the form of a pandas Series.
 # Output: ordered dictionary holding paragraph vector features
 def infer_paragraph_embeddings_features(col_values: list, features: OrderedDict, dim, reuse_model):
-
     if not reuse_model or model is None:
         # Load pretrained paragraph vector model
         initialise_pretrained_model(dim)
@@ -119,5 +107,11 @@ def infer_paragraph_embeddings_features(col_values: list, features: OrderedDict,
     # Infer paragraph vector for data sample.
     inferred = model.infer_vector(tokens, steps=20, alpha=0.025)
 
-    for idx, value in enumerate(inferred):
-        features[KEYS[idx]] = value
+    if is_first():
+        # the first output needs fully expanded keys (to drive CSV header)
+        for idx, value in enumerate(inferred):
+            features['par_vec_' + str(idx)] = value
+    else:
+        # subsequent lines only care about values, so we can pre-render a block of CSV. This
+        # cuts overhead of storing granular values in the features dictionary
+        features['par_vec-pre-rendered'] = ','.join(map(lambda x: '%g' % x, inferred))

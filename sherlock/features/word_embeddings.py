@@ -1,9 +1,12 @@
 import numpy as np
 
-from scipy import stats
 from collections import OrderedDict
 from datetime import datetime
-import pandas as pd
+from sherlock.global_state import is_first
+import itertools
+import statistics as statistics
+import math as math
+from sherlock.features.stats_helper import mode
 
 word_to_embedding = {}
 
@@ -18,7 +21,8 @@ def initialise_word_embeddings():
 
     for w in word_vectors_f:
         term, vector = w.strip().split(' ', 1)
-        vector = np.array(vector.split(' '), dtype=float)
+        vector = list(map(float, vector.split(' ')))
+
         word_to_embedding[term] = vector
 
     end = datetime.now()
@@ -29,18 +33,25 @@ def initialise_word_embeddings():
     print(f'Initialise Word Embeddings process took {x} seconds.')
 
 
-def extract_word_embeddings_features(series: pd.Series):
-    features = OrderedDict()
+ZEROS = [0] * 50
 
-    extract_word_embeddings_features(series, features)
+# nans for mean, median, stdev and mode for each embedding
+NANS = ','.join(map(str, [np.nan] * 50 * 4))
 
-    return features
+
+def transpose(a):
+    # transpose array:
+    #   >>> theArray = [['a','b','c'],['d','e','f'],['g','h','i']]
+    #   >>> [*zip(*theArray)]
+    #   [('a', 'd', 'g'), ('b', 'e', 'h'), ('c', 'f', 'i')]
+    #
+    #   https://stackoverflow.com/questions/4937491/matrix-transpose-in-python
+    return [*zip(*a)]
 
 
 # Input: a single column in the form of a pandas series
 # Output: ordered dictionary holding word embedding features
 def extract_word_embeddings_features(col_values: list, features: OrderedDict):
-
     num_embeddings = 50
 
     embeddings = []
@@ -50,48 +61,88 @@ def extract_word_embeddings_features(col_values: list, features: OrderedDict):
     if not word_to_embedding:
         initialise_word_embeddings()
 
-    for v in col_values:
-        v = str(v).lower()
-
-        if v in word_to_embedding:
-            embeddings.append(word_to_embedding.get(v))
+    for col_value in map(str.lower, col_values):
+        if col_value in word_to_embedding:
+            embeddings.append(word_to_embedding.get(col_value))
         else:
-            words = v.split(' ')
-            embeddings_to_all_words = []
+            embeddings_to_all_words = [word_to_embedding.get(w) for w in col_value.split(' ') if w in word_to_embedding]
 
-            for w in words:
-                if w in word_to_embedding:
-                    embeddings_to_all_words.append(word_to_embedding.get(w))
+            n = len(embeddings_to_all_words)
 
-            if embeddings_to_all_words:
-                mean_of_word_embeddings = np.nanmean(embeddings_to_all_words, axis=0)
+            if n == 1:
+                embeddings.append(embeddings_to_all_words[0])
+            elif n > 1:
+                mean_of_word_embeddings = np.mean(embeddings_to_all_words, dtype=float, axis=0)
                 embeddings.append(mean_of_word_embeddings)
 
-    if len(embeddings) == 0:
-        # need to maintain same insertion order as the other case, hence running for loop per feature
-        for i in range(num_embeddings): features['word_embedding_avg_' + str(i)] = np.nan
-        for i in range(num_embeddings): features['word_embedding_std_' + str(i)] = np.nan
-        for i in range(num_embeddings): features['word_embedding_med_' + str(i)] = np.nan
-        for i in range(num_embeddings): features['word_embedding_mode_' + str(i)] = np.nan
+    n_rows = len(embeddings)
+
+    if n_rows == 0:
+        if is_first():
+            # the first output needs fully expanded keys (to drive CSV header)
+            # need to maintain same insertion order as the other case, hence running for loop per feature
+            for i in range(num_embeddings):
+                features['word_embedding_avg_' + str(i)] = np.nan
+            for i in range(num_embeddings):
+                features['word_embedding_std_' + str(i)] = np.nan
+            for i in range(num_embeddings):
+                features['word_embedding_med_' + str(i)] = np.nan
+            for i in range(num_embeddings):
+                features['word_embedding_mode_' + str(i)] = np.nan
+        else:
+            # subsequent lines only care about values, so we can pre-render a block of CSV. This
+            # cuts overhead of storing granular values in the features dictionary
+            features['word_embedding-pre-rendered'] = NANS
 
         features['word_embedding_feature'] = 0
 
-        return features
-
     else:
-        mean_embeddings = np.nanmean(embeddings, axis=0)
-        med_embeddings = np.nanmedian(embeddings, axis=0)
-        std_embeddings = np.nanstd(embeddings, axis=0)
+        if n_rows > 1:
+            mean_embeddings = []
+            std_embeddings = []
+            med_embeddings = []
+            mode_embeddings = []
 
-        # if only one dimension, then mode is equivalent to the embedding data
-        if len(embeddings) == 1:
-            mode_embeddings = embeddings[0]
+            # transpose array (if using numpy, stats would operate on axis=0):
+            for axis0 in transpose(embeddings):
+                # mode requires sorted list, and Python's sort is super quick on presorted arrays. The subsequent
+                # median calc also calls sorted(), so this helps there, too.
+                #
+                # Re: sorting in Python
+                #   https://stackoverflow.com/questions/1436962/python-sort-method-on-list-vs-builtin-sorted-function
+                axis0 = sorted(axis0)
+
+                _mean = sum(axis0) / n_rows
+
+                mean_embeddings.append(_mean)
+
+                _variance = sum((x - _mean) ** 2 for x in axis0) / n_rows
+                std_embeddings.append(math.sqrt(_variance))
+
+                med_embeddings.append(statistics.median(axis0))
+
+                mode_embeddings.append(mode(axis0, True))
+        # n_rows == 1
         else:
-            mode_embeddings = stats.mode(embeddings, axis=0, nan_policy='omit')[0].flatten()
+            # if only one dimension, then mean, median and mode are equivalent to the embedding data
+            mean_embeddings = med_embeddings = mode_embeddings = embeddings[0]
+            std_embeddings = ZEROS
 
-        for i, e in enumerate(mean_embeddings): features['word_embedding_avg_' + str(i)] = e
-        for i, e in enumerate(std_embeddings): features['word_embedding_std_' + str(i)] = e
-        for i, e in enumerate(med_embeddings): features['word_embedding_med_' + str(i)] = e
-        for i, e in enumerate(mode_embeddings): features['word_embedding_mode_' + str(i)] = e
+        if is_first():
+            # the first output needs fully expanded keys (to drive CSV header)
+            for i, e in enumerate(mean_embeddings):
+                features['word_embedding_avg_' + str(i)] = e
+            for i, e in enumerate(std_embeddings):
+                features['word_embedding_std_' + str(i)] = e
+            for i, e in enumerate(med_embeddings):
+                features['word_embedding_med_' + str(i)] = e
+            for i, e in enumerate(mode_embeddings):
+                features['word_embedding_mode_' + str(i)] = e
+        else:
+            # subsequent lines only care about values, so we can pre-render a block of CSV. This
+            # cuts overhead of storing granular values in the features dictionary
+            features['word_embedding-pre-rendered'] = \
+                ','.join(map(lambda x: '%g' % x,
+                             itertools.chain(mean_embeddings, std_embeddings, med_embeddings, mode_embeddings)))
 
         features['word_embedding_feature'] = 1

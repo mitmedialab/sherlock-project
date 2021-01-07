@@ -10,7 +10,7 @@ class Test(TestCase):
         initialise_word_embeddings()
 
     def test_extract_word_embeddings_features(self):
-        col_values = ['$', 'B', 'Aab$', '$$ca', 'C$B$', 'cat']
+        col_values = ['$', 'B', 'Aab$', '$$ca', 'C$B$', 'cat', 'two words', '!£$@$ one']
 
         features = OrderedDict()
 

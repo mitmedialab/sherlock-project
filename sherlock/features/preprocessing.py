@@ -1,9 +1,7 @@
-from ast import literal_eval
 from collections import OrderedDict
 import random
 import os
 from typing import Union
-import csv
 
 from google_drive_downloader import GoogleDriveDownloader as gd
 import pandas as pd
@@ -14,6 +12,9 @@ from sherlock.features.bag_of_characters import extract_bag_of_characters_featur
 from sherlock.features.bag_of_words import extract_bag_of_words_features
 from sherlock.features.word_embeddings import extract_word_embeddings_features
 from sherlock.features.paragraph_vectors import infer_paragraph_embeddings_features
+from sherlock.global_state import set_first, reset_first
+from sherlock.features.helpers import literal_eval_as_str
+from functools import partial
 
 
 def prepare_feature_extraction():
@@ -84,11 +85,13 @@ def convert_string_lists_to_lists(
     """
     tqdm.pandas()
 
-    pandarallel.initialize()
+   # pandarallel.initialize()
+
+    literal_eval = partial(literal_eval_as_str, none_value='')
     
     if isinstance(data, pd.DataFrame):
         if data_column_name is None: raise ValueError("Missing column name of data.")
-        converted_data = data[data_column_name].parallel_apply(literal_eval)
+        converted_data = data[data_column_name].progress_apply(literal_eval)
     elif isinstance(data, pd.Series):
         converted_data = data.progress_apply(literal_eval)
     else:
@@ -115,56 +118,47 @@ def extract_features(output_filename, data: Union[pd.DataFrame, pd.Series]) -> p
     data
         A pandas DataFrame or Series with each row a list of string values.
     """
-    n_samples = 1000
     vec_dim = 400
     reuse_model = True
     verify_keys = False
 
     first_keys = None
 
-    with open(output_filename, "w") as outfile:
-        csvwriter = csv.writer(outfile)
+    reset_first()
 
+    with open(output_filename, "w") as outfile:
         for raw_sample in tqdm(data, desc='Extracting Features'):
+            n_samples = 1000
             n_values = len(raw_sample)
 
             if n_samples > n_values:
                 n_samples = n_values
 
             random.seed(13)
-            raw_sample = pd.Series(random.choices(raw_sample, k=n_samples)).astype(str)
+            raw_sample = random.sample(raw_sample, k=n_samples)
 
-            # f_source = OrderedDict()
-            # f_source['source'] = '\\;'.join(raw_sample.str.join(''))
-            #
-            # s = f_source['source']
-            # print(f'{i} "{s}"')
-            #
-            # source_features = list(f_source.items())
-            #
+            features = OrderedDict()
 
-            data_no_null = raw_sample.dropna()
-
-            f = OrderedDict()
-
-            extract_bag_of_characters_features(data_no_null, f)
-            extract_word_embeddings_features(data_no_null, f)
-            extract_bag_of_words_features(data_no_null, f, n_samples)
+            extract_bag_of_characters_features(raw_sample, features)
+            extract_word_embeddings_features(raw_sample, features)
+            extract_bag_of_words_features(raw_sample, features, n_samples)
 
             # TODO use data_no_null version?
-            infer_paragraph_embeddings_features(raw_sample, f, vec_dim, reuse_model)
+            infer_paragraph_embeddings_features(raw_sample, features, vec_dim, reuse_model)
 
             if first_keys is None:
-                first_keys = f.keys()
-                first_keys_str = ','.join(f.keys())
+                first_keys = features.keys()
+                first_keys_str = ','.join(features.keys())
 
                 print(f'Exporting {len(first_keys)} column features')
 
-                csvwriter.writerow(first_keys)
+                outfile.write(first_keys_str + '\n')
+
+                set_first()
             elif verify_keys:
-                keys = ','.join(f.keys())
+                keys = ','.join(features.keys())
                 if first_keys_str != keys:
-                    key_list = list(f.keys())
+                    key_list = list(features.keys())
 
                     print(f'keys are NOT equal. k1 len={len(first_keys)}, k2 len={len(keys)}')
 
@@ -174,4 +168,4 @@ def extract_features(output_filename, data: Union[pd.DataFrame, pd.Series]) -> p
                         if k1 != k2:
                             print(f'{k1} != {k2}')
 
-            csvwriter.writerow(list(f.values()))
+            outfile.write(','.join(map(str,features.values())) + '\n')
