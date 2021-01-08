@@ -6,7 +6,6 @@ from typing import Union
 from google_drive_downloader import GoogleDriveDownloader as gd
 import pandas as pd
 from tqdm import tqdm
-from pandarallel import pandarallel
 
 from sherlock.features.bag_of_characters import extract_bag_of_characters_features
 from sherlock.features.bag_of_words import extract_bag_of_words_features
@@ -84,8 +83,6 @@ def convert_string_lists_to_lists(
         List with labels.
     """
     tqdm.pandas()
-
-   # pandarallel.initialize()
 
     literal_eval = partial(literal_eval_as_str, none_value='')
     
