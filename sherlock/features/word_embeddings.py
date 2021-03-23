@@ -51,19 +51,20 @@ def transpose(a):
 
 # Input: a single column in the form of a pandas series
 # Output: ordered dictionary holding word embedding features
-def extract_word_embeddings_features(col_values: list, features: OrderedDict):
+def extract_word_embeddings_features(values, word_to_embedding):
+
     num_embeddings = 50
 
     embeddings = []
 
-    global word_to_embedding
+    values = values.dropna()
 
-    if not word_to_embedding:
-        initialise_word_embeddings()
+    for v in values:
 
-    for col_value in map(str.lower, col_values):
-        if col_value in word_to_embedding:
-            embeddings.append(word_to_embedding.get(col_value))
+        v = str(v).lower()
+
+        if v in word_to_embedding:
+            embeddings.append(word_to_embedding.get(v))
         else:
             embeddings_to_all_words = [word_to_embedding.get(w) for w in col_value.split(' ') if w in word_to_embedding]
 
