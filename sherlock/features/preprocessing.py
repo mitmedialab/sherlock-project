@@ -52,6 +52,19 @@ def prepare_feature_extraction():
         
     print("All files for extracting word and paragraph embeddings are present.")
     
+def prepare_word_embeddings():
+
+    word_vectors_f = open('../sherlock/features/glove.6B.50d.txt', encoding='utf-8')
+    word_to_embedding = {}
+
+    for w in word_vectors_f:
+
+        term, vector = w.strip().split(' ', 1)
+        vector = np.array(vector.split(' '), dtype=float)
+        word_to_embedding[term] = vector
+
+    return word_to_embedding
+
     
 def convert_string_lists_to_lists(
     data: Union[pd.DataFrame, pd.Series],
@@ -116,6 +129,8 @@ def extract_features(data: Union[pd.DataFrame, pd.Series]) -> pd.DataFrame:
     """
     prepare_feature_extraction()
 
+    word_to_embedding = prepare_word_embeddings()
+
     features_list = []
     df_par = pd.DataFrame()
     n_samples = 1000
@@ -137,7 +152,7 @@ def extract_features(data: Union[pd.DataFrame, pd.Series]) -> pd.DataFrame:
 
         f = OrderedDict(
             list(extract_bag_of_characters_features(raw_sample).items()) +
-            list(extract_word_embeddings_features(raw_sample).items()) +
+            list(extract_word_embeddings_features(raw_sample, word_to_embedding).items()) +
             list(extract_bag_of_words_features(raw_sample, n_values).items())
         )
         features_list.append(f)
