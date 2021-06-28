@@ -8,5 +8,5 @@ setuptools.setup(
     description="Package for semantic type detection using Sherlock",
     url="https://github.com/mitmedialab/sherlock-project",
     packages=setuptools.find_packages(),
-    package_dir={"sherlock": "sherlock"}
+    package_dir={"sherlock": "sherlock"},
 )
