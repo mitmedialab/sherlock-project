@@ -16,7 +16,7 @@ def extract_bag_of_words_features(data):
     # Entropy of column
     freq_dist = nltk.FreqDist(data)
     probs = np.array([freq_dist.freq(item) for item in freq_dist])
-    f["col_entropy"] = (probs * np.log2(probs)).sum()
+    f["col_entropy"] = -(probs * np.log2(probs)).sum()
 
     # Fraction of cells with unique content
     num_unique = len(freq_dist)
