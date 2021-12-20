@@ -8,7 +8,6 @@ from sherlock.features.bag_of_characters import extract_bag_of_characters_featur
 from sherlock.features.bag_of_words import extract_bag_of_words_features
 from sherlock.features.word_embeddings import extract_word_embeddings_features
 from sherlock.features.paragraph_vectors import infer_paragraph_embeddings_features
-from sherlock.features.numerical import extract_numerical_collection_features
 from sherlock.features.helpers import literal_eval_as_str
 from sherlock.global_state import is_first, set_first
 from datetime import datetime
@@ -51,8 +50,6 @@ def extract_features(col_values: list):
     extract_word_embeddings_features(col_values, features)
     extract_bag_of_words_features(col_values, features, len(col_values))
     infer_paragraph_embeddings_features(col_values, features, dim=400, reuse_model=True)
-
-    extract_numerical_collection_features(col_values, features)
 
     return features
 
@@ -116,8 +113,8 @@ def extract_features_to_csv(output_path, parquet_values):
 
     with open(output_path, "w") as outfile:
         # Comparable performance with using pool.imap directly, but the code is *much* cleaner
-        for keys, values_str in pseq(map(as_py_str, parquet_values), processes=8, partition_size=100) \
         #for keys, values_str in seq(map(as_py_str, parquet_values)) \
+        for keys, values_str in pseq(map(as_py_str, parquet_values), processes=8, partition_size=100) \
                 .map(to_string_list) \
                 .map(random_sample) \
                 .map(normalise_string_whitespace) \
@@ -150,65 +147,5 @@ def extract_features_to_csv(output_path, parquet_values):
                             print(f'{k1} != {k2}')
 
             outfile.write(values_str)
-
-    print(f'Finished. Processed {i} rows in {datetime.now() - start}, key_count={key_count}')
-
-
-def extract_features_to_csv2(output_path, parquet_values, n=None):
-    verify_keys = False
-    first_keys = None
-    i = 0
-    key_count = 0
-
-    # retrieve keys for every row only if verify_keys=True
-    drop_keys = partial(keys_on_first, first_keys_only=(not verify_keys))
-
-    start = datetime.now()
-
-    print(f'Starting {output_path} at {start}')
-
-    with open(output_path, "w") as outfile:
-        for pv in parquet_values:
-            v = as_py_str(pv)
-
-            v_str = to_string_list(v)
-            rnd_sample = random_sample(v_str)
-            normalised = normalise_string_whitespace(rnd_sample)
-
-            features = extract_features(normalised)
-
-            keys, values_str = numeric_values_to_str(features)
-
-            i = i + 1
-
-            if keys is not None:
-                key_count = key_count + 1
-
-            if first_keys is None:
-                first_keys = keys
-                first_keys_str = keys_to_csv(keys)
-
-                print(f'Exporting {len(first_keys)} column features')
-
-                outfile.write(keys_to_csv(keys))
-                set_first()
-            elif verify_keys:
-                keys_str = ','.join(keys)
-                if first_keys_str != keys_str:
-                    key_list = list(keys)
-
-                    print(f'keys are NOT equal. k1 len={len(first_keys)}, k2 len={len(keys)}')
-
-                    for idx, k1 in enumerate(first_keys):
-                        k2 = key_list[idx]
-
-                        if k1 != k2:
-                            print(f'{k1} != {k2}')
-
-            outfile.write(values_str)
-
-            if n is not None:
-                if i == n:
-                    break
 
     print(f'Finished. Processed {i} rows in {datetime.now() - start}, key_count={key_count}')
