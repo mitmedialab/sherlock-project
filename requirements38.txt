@@ -19,7 +19,7 @@ joblib==1.0.0
 Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.0
 loky==2.9.0
-line_profiler=3.3.1
+line_profiler==3.3.1
 Markdown==3.1.1
 nltk==3.5
 matplotlib==2.2.5
