@@ -1,7 +1,6 @@
 import unittest
 from unittest import TestCase
 from scipy.stats import skew, kurtosis
-from array import array
 from sherlock.features.stats_helper import compute_stats, mode
 from numpy.testing import assert_array_almost_equal
 import numpy as np
@@ -24,36 +23,36 @@ def old_stats(values):
 class Test(TestCase):
 
     def test_custom_stats(self):
-        all_values = [array('i', [1, 1, 1, 1, 1, 1, 1]),
-                      array('i', [1, 0, 0, 0, 1]),
-                      array('i', [0, 1, 1, 1, 0]),
-                      array('i', [2, 1, 1, 1, 2]),
-                      array('i', [2, 0, 0, 0, 1]),
-                      array('i', [1, 0, 0, 0, 0]),
-                      array('i', [1, 0, 0, 0, 1]),
-                      array('i', [1, 1, 1, 2, 1]),
-                      array('i', [1, 0, 0, 2, 1]),
-                      array('i', [0, 1, 1, 0, 0]),
-                      array('i', [0, 0, 0, 1, 0]),
-                      array('i', [1, 0, 0, 0, 1]),
-                      array('i', [0, 1, 1, 0, 0]),
-                      array('i', [1, 0, 0, 0, 0]),
-                      array('i', [4, 1, 1, 0, 1]),
-                      array('i', [0, 1, 1, 1, 1]),
-                      array('i', [1, 1, 1, 1, 2]),
-                      array('i', [8, 0, 0, 3, 3]),
-                      array('i', [1, 0, 0, 1, 0]),
-                      array('i', [1, 0, 0, 0, 0]),
-                      array('i', [2, 2, 2, 1, 2]),
-                      array('i', [1, 0, 0, 0, 1]),
-                      array('i', [6, 2, 2, 1, 0]),
-                      array('i', [1, 2, 2, 1, 0]),
-                      array('i', [1, 0, 0, 2, 0]),
-                      array('i', [4, 2, 2, 1, 3]),
-                      array('i', [3, 2, 2, 1, 1]),
-                      array('i', [4, 4, 4, 2, 1]),
-                      array('i', [1, 1, 1, 1, 0]),
-                      array('i', [0, 0, 0, 0, 1])]
+        all_values = [[1, 1, 1, 1, 1, 1, 1],
+                      [1, 0, 0, 0, 1],
+                      [0, 1, 1, 1, 0],
+                      [2, 1, 1, 1, 2],
+                      [2, 0, 0, 0, 1],
+                      [1, 0, 0, 0, 0],
+                      [1, 0, 0, 0, 1],
+                      [1, 1, 1, 2, 1],
+                      [1, 0, 0, 2, 1],
+                      [0, 1, 1, 0, 0],
+                      [0, 0, 0, 1, 0],
+                      [1, 0, 0, 0, 1],
+                      [0, 1, 1, 0, 0],
+                      [1, 0, 0, 0, 0],
+                      [4, 1, 1, 0, 1],
+                      [0, 1, 1, 1, 1],
+                      [1, 1, 1, 1, 2],
+                      [8, 0, 0, 3, 3],
+                      [1, 0, 0, 1, 0],
+                      [1, 0, 0, 0, 0],
+                      [2, 2, 2, 1, 2],
+                      [1, 0, 0, 0, 1],
+                      [6, 2, 2, 1, 0],
+                      [1, 2, 2, 1, 0],
+                      [1, 0, 0, 2, 0],
+                      [4, 2, 2, 1, 3],
+                      [3, 2, 2, 1, 1],
+                      [4, 4, 4, 2, 1],
+                      [1, 1, 1, 1, 0],
+                      [0, 0, 0, 0, 1]]
 
         for values in all_values:
             _mean, _variance, _skew, _kurtosis, _min, _max, _sum = old_stats(values)
@@ -70,9 +69,9 @@ class Test(TestCase):
 
     @unittest.skip("benchmark - run manually")
     def test_custom_stats_benchmark(self):
-        # compute_stats is about 10x faster than using scipy + some np methods
-        # t1=0.5343782699999999, t2=5.5514434900000005
-        v = array('i', [4, 4, 4, 2, 1])
+        # compute_stats is about 11x faster than using scipy + some np methods
+        # t1=0.504788906, t2=5.527959592
+        v = [4, 4, 4, 2, 1]
 
         t1 = timeit(lambda: compute_stats(v), number=10000)
         t2 = timeit(lambda: old_stats(v), number=10000)
@@ -83,7 +82,7 @@ class Test(TestCase):
     def test_median_benchmark(self):
         # statistics.median is about 40x faster than using np.median
         # t1=0.276657643, t2=0.007461202
-        v = array('i', [4, 4, 4, 2, 1])
+        v = [4, 4, 4, 2, 1]
 
         t1 = timeit(lambda: np.median(v), number=10000)
         t2 = timeit(lambda: statistics.median(v), number=10000)

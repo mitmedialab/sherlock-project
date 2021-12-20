@@ -50,7 +50,7 @@ def construct_sherlock_model(nn_id: str, with_weights: bool):
         sherlock_model.load_weights(f"../models/{nn_id}_weights.h5")
         
     sherlock_model.compile(
-        optimizer=tf.keras.optimizers.Adam(lr=lr),
+        optimizer=tf.keras.optimizers.Nadam(lr=lr),
         loss='categorical_crossentropy',
         metrics=['categorical_accuracy']
     )

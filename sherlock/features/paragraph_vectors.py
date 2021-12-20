@@ -15,7 +15,9 @@ assert gensim.models.doc2vec.FAST_VERSION > -1, "This will be painfully slow oth
 
 def tokenise(values):
     joined = ' '.join(s for s in values if len(s) >= 2)
-    filtered = ''.join(e for e in joined if e.isalnum() or e.isspace()).lower()
+
+    # stopwords need apostrophe
+    filtered = ''.join(e for e in joined if e.isalnum() or e.isspace() or e == "'").lower()
 
     return [word for word in nltk.word_tokenize(filtered) if len(word) >= 2 and word not in STOPWORDS_ENGLISH]
 
@@ -47,13 +49,14 @@ def tagcol_paragraph_embeddings_features(train_data: pd.Series, train_labels: li
 # Only needed for training.
 def train_paragraph_embeddings_features(columns, dim):
     # Train Doc2Vec model
-    model = Doc2Vec(columns, dm=0, negative=3, workers=multiprocessing.cpu_count(), vector_size=dim, epochs=20,
-                    min_count=2, seed=13)
+    train_model = Doc2Vec(columns, dm=0, negative=3, workers=multiprocessing.cpu_count(), vector_size=dim, epochs=20,
+                          min_count=2, seed=13)
 
     # Save trained model
     model_file = f'../sherlock/features/par_vec_retrained_{dim}.pkl'
-    model.save(model_file)
-    model.delete_temporary_training_data(keep_doctags_vectors=True, keep_inference=True)
+
+    train_model.save(model_file)
+    train_model.delete_temporary_training_data(keep_doctags_vectors=True, keep_inference=True)
 
 
 DIM = 400

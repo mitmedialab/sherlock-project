@@ -24,3 +24,11 @@ class Test(TestCase):
         result = literal_eval_as_str(s1)
 
         assert result == []
+
+    def test_literal_eval_as_str_multiple_commas_in_string(self):
+        s1 = "['I have, multiple commas, in string which should, be preserved, ', ', another']"
+
+        result = literal_eval_as_str(s1)
+
+        assert result == ['I have, multiple commas, in string which should, be preserved, ',
+                          ', another']

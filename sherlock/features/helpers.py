@@ -18,7 +18,7 @@ def escape_for_regex(c):
 
 
 CHARACTERS_TO_CHECK = (
-        [c for c in string.printable if c not in ('\n', '\f', '\v', '\r', '\t')]
+    [c for c in string.printable if c not in ('\n', '\f', '\v', '\r', '\t')]
 )
 
 
@@ -39,32 +39,42 @@ def generate_chars_col():
 
 # Alternative for ast.literal_eval, but keeps the elements as str. This version is about 5x faster than literal_eval
 # in this use case
-# parse arrays in the form "['a value', None, 0.89, "other string"]
+# parse arrays in the form "['a value', None, 0.89, \"other string\"]"
 def literal_eval_as_str(value, none_value=None):
+    if value and value[0] == '[' and value[-1] == ']':
+        value = value[1:-1]
+
+    if not value:
+        return []
+
     strings = []
 
     quote = None
     s2 = ''
 
-    if len(value) == 0:
-        return strings
-
-    if value[0] == '[':
-        value = value[1:len(value) - 1]
-
     for s in value.split(', '):
-        if len(s) == 0:
+        if not s:
             strings.append('')
         elif s[0] in ["'", '"']:
-            if s[0] == s[len(s) - 1]:
-                strings.append(s[1:len(s) - 1])
+            if len(s) > 1 and s[0] == s[-1]:
+                strings.append(s[1:-1])
             else:
-                quote = s[0]
-                s2 = s2 + s[1:] + ', '
+                if quote is None:
+                    quote = s[0]
+                elif s[0] == quote:
+                    s2 = s2 + s[1:]
+                    quote = None
+                    strings.append(s2 + s[:-1])
+                    s2 = ''
+
+                if len(s) == 1:
+                    s2 = ', '
+                else:
+                    s2 = s2 + s[1:] + ', '
         elif quote is not None:
-            if quote == s[len(s) - 1]:
+            if quote == s[-1]:
                 quote = None
-                strings.append(s2 + s[:len(s) - 1])
+                strings.append(s2 + s[:-1])
                 s2 = ''
             else:
                 s2 = s2 + s + ', '

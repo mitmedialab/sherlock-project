@@ -8,15 +8,16 @@ from sherlock.features.bag_of_characters import extract_bag_of_characters_featur
 from sherlock.features.bag_of_words import extract_bag_of_words_features
 from sherlock.features.word_embeddings import extract_word_embeddings_features
 from sherlock.features.paragraph_vectors import infer_paragraph_embeddings_features
+from sherlock.features.numerical import extract_numerical_collection_features
 from sherlock.features.helpers import literal_eval_as_str
 from sherlock.global_state import is_first, set_first
 from datetime import datetime
-from functional import pseq
+from functional import pseq, seq
 from functools import partial
 
 
-def as_py_str(x: pyarrow.lib.StringScalar):
-    return x.as_py()
+def as_py_str(x):
+    return x.as_py() if isinstance(x, pyarrow.lib.StringScalar) else x
 
 
 def to_string_list(x):
@@ -50,6 +51,8 @@ def extract_features(col_values: list):
     extract_word_embeddings_features(col_values, features)
     extract_bag_of_words_features(col_values, features, len(col_values))
     infer_paragraph_embeddings_features(col_values, features, dim=400, reuse_model=True)
+
+    extract_numerical_collection_features(col_values, features)
 
     return features
 
@@ -109,11 +112,12 @@ def extract_features_to_csv(output_path, parquet_values):
 
     start = datetime.now()
 
-    print(f'Starting {output_path} at {start}')
+    print(f'Starting {output_path} at {start}. Rows={len(parquet_values)}')
 
     with open(output_path, "w") as outfile:
         # Comparable performance with using pool.imap directly, but the code is *much* cleaner
         for keys, values_str in pseq(map(as_py_str, parquet_values), processes=8, partition_size=100) \
+        #for keys, values_str in seq(map(as_py_str, parquet_values)) \
                 .map(to_string_list) \
                 .map(random_sample) \
                 .map(normalise_string_whitespace) \
