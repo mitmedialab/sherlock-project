@@ -4,6 +4,7 @@ import re
 import io
 import csv
 import os
+import multiprocessing
 from collections import OrderedDict
 from sherlock.features.bag_of_characters import extract_bag_of_characters_features
 from sherlock.features.bag_of_words import extract_bag_of_words_features
@@ -111,20 +112,21 @@ def extract_features_to_csv(output_path, parquet_values):
     first_keys = None
     i = 0
     key_count = 0
+    core_count = multiprocessing.cpu_count()
 
     # retrieve keys for every row only if verify_keys=True
     drop_keys = partial(keys_on_first, first_keys_only=(not verify_keys))
 
     start = datetime.now()
 
-    print(f'Starting {output_path} at {start}. Rows={len(parquet_values)}')
+    print(f'Starting {output_path} at {start}. Rows={len(parquet_values)}, using {core_count} CPU cores')
 
     ensure_path_exists(output_path)
 
     with open(output_path, "w") as outfile:
         # Comparable performance with using pool.imap directly, but the code is *much* cleaner
         #for keys, values_str in seq(map(as_py_str, parquet_values)) \
-        for keys, values_str in pseq(map(as_py_str, parquet_values), processes=8, partition_size=100) \
+        for keys, values_str in pseq(map(as_py_str, parquet_values), processes=core_count, partition_size=100) \
                 .map(to_string_list) \
                 .map(random_sample) \
                 .map(normalise_string_whitespace) \
