@@ -3,6 +3,7 @@ import pyarrow.lib
 import re
 import io
 import csv
+import os
 from collections import OrderedDict
 from sherlock.features.bag_of_characters import extract_bag_of_characters_features
 from sherlock.features.bag_of_words import extract_bag_of_words_features
@@ -98,6 +99,13 @@ def keys_to_csv(keys):
         return output.getvalue()
 
 
+def ensure_path_exists(output_path):
+    path = os.path.dirname(output_path)
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
 def extract_features_to_csv(output_path, parquet_values):
     verify_keys = False
     first_keys = None
@@ -110,6 +118,8 @@ def extract_features_to_csv(output_path, parquet_values):
     start = datetime.now()
 
     print(f'Starting {output_path} at {start}. Rows={len(parquet_values)}')
+
+    ensure_path_exists(output_path)
 
     with open(output_path, "w") as outfile:
         # Comparable performance with using pool.imap directly, but the code is *much* cleaner
