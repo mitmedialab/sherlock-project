@@ -13,14 +13,14 @@ brew install python@3.7
 python3 --version
 Python 3.9.1
 
-# revert to 3.7 (needed by TensorFlow 1.14)
+# revert to 3.7 (needed by TensorFlow 1.15)
 
 brew unlink python@3.9
 brew unlink python@3.8
 brew link python@3.7
 
 python3 --version
-Python 3.8.6
+Python 3.7.12
 
 
 pip install virtualenv # install first
@@ -34,16 +34,8 @@ python3.7 -m pip install --upgrade pip
 
 python3.7 -m pip install -U pip setuptools
 
-# need specific version of wheel to prevent the following error message:
-# ERROR: tensorflow-1.15.4-cp37-cp37m-macosx_10_15_64bit.whl is not a supported wheel on this platform.
-pip3 install -U wheel==0.34.1
-
-# copy wheel from S3 first (too big to store in github)
-aws s3 cp s3://hylas-experiments/build/python3/wheel/tensorflow-1.15.4-cp37-cp37m-macosx_10_15_x86_64.whl wheel/
-pip3 install --upgrade wheel/tensorflow-1.15.4-cp37-cp37m-macosx_10_15_x86_64.whl
-
 pip install -r requirements.txt
-pip install jupyter line_profiler pandarallel pympler pyfunctional
+pip install jupyter line_profiler pandarallel pympler
 ```
 
 ## Usage
