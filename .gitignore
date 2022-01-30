@@ -90,6 +90,9 @@ data/processed
 data/raw
 data.zip
 
+# retrained doc2vec files
+sherlock/features/par_vec_retrained_*
+
 # SageMath parsed files
 *.sage.py
 
