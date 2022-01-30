@@ -67,7 +67,7 @@ def initialise_pretrained_model(dim):
     start = datetime.now()
     global model
 
-    filename = f'../sherlock/features/par_vec_retrained_{dim}.pkl'
+    filename = f'../sherlock/features/par_vec_trained_{dim}.pkl'
 
     assert dim == DIM
 
@@ -101,7 +101,7 @@ def infer_paragraph_embeddings_features(col_values: list, features: OrderedDict,
         initialise_pretrained_model(dim)
 
     # Resetting the random seed before inference keeps the inference vectors deterministic. Gensim uses random values
-    # in the inference process, so setting the seed just before hand makes the inference repeatable.
+    # in the inference process, so setting the seed just beforehand makes the inference repeatable.
     # https://github.com/RaRe-Technologies/gensim/issues/447
     model.random.seed(13)
 
