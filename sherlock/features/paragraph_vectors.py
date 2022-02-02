@@ -67,7 +67,7 @@ def initialise_pretrained_model(dim):
     start = datetime.now()
     global model
 
-    filename = f'../sherlock/features/par_vec_trained_{dim}.pkl'
+    filename = f'../sherlock/features/par_vec_retrained_{dim}.pkl'
 
     assert dim == DIM
 

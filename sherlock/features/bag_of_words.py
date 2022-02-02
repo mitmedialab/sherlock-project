@@ -24,14 +24,17 @@ NUMBER_PATTERN = re.compile(r'[0-9]')
 TEXT_PATTERN = re.compile(r'[a-zA-Z]')
 WORD_PATTERN = re.compile(r'[\w+]')
 
-SPECIAL_CHARACTERS_REGEX = '[' + ''.join(escape_for_regex(c) for c in string.printable
-                                         if c not in ('\n', '\f', '\v', '\r', '\t')
-                                         and not re.match(r'[a-zA-Z0-9\s]', c)) + ']'
 
-SPECIAL_CHARACTERS_PATTERN = re.compile(SPECIAL_CHARACTERS_REGEX)
+# SPECIAL_CHARACTERS_REGEX = '[' + ''.join(escape_for_regex(c) for c in string.printable
+#                                          if c not in ('\n', '\f', '\r', '\t')
+#                                          and not re.match(r'[a-zA-Z0-9\s]', c)) + ']'
+#
+# SPECIAL_CHARACTERS_PATTERN = re.compile(SPECIAL_CHARACTERS_REGEX)
+
+SPECIAL_CHARACTERS_PATTERN = re.compile(r'[!@#$%^&*(),.?":{}|<>]')
 
 
-# Input: a single column in the form of a pandas series
+# Input: a single column in the form of a Python list
 # Output: ordered dictionary holding bag of words features
 def extract_bag_of_words_features(col_values: list, features: OrderedDict, n_val):
     if not n_val:

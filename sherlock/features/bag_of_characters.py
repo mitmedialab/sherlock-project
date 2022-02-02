@@ -5,7 +5,7 @@ from sherlock.features.helpers import CHARACTERS_TO_CHECK
 from sherlock.global_state import is_first
 
 
-# Input: a single column in the form of pandas series
+# Input: a single column in the form of Python list
 # Output: ordered dictionary holding bag of character features
 def extract_bag_of_characters_features(col_values: list, features: OrderedDict):
     # Create a set of unique chars from the string vectors to quickly test whether to perform expensive

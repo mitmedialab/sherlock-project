@@ -938,23 +938,23 @@
 937	n_[]-agg-sum
 938	n_[]-agg-kurtosis
 939	n_[]-agg-skewness
-940	n_[\\]-agg-any
-941	n_[\\]-agg-all
-942	n_[\\]-agg-mean
-943	n_[\\]-agg-var
-944	n_[\\]-agg-min
-945	n_[\\]-agg-max
-946	n_[\\]-agg-median
-947	n_[\\]-agg-sum
-948	n_[\\]-agg-kurtosis
-949	n_[\\]-agg-skewness
-950	n_[\^]-agg-any
-951	n_[\^]-agg-all
-952	n_[\^]-agg-mean
-953	n_[\^]-agg-var
-954	n_[\^]-agg-min
-955	n_[\^]-agg-max
-956	n_[\^]-agg-median
-957	n_[\^]-agg-sum
-958	n_[\^]-agg-kurtosis
-959	n_[\^]-agg-skewness
+940	n_[\]-agg-any
+941	n_[\]-agg-all
+942	n_[\]-agg-mean
+943	n_[\]-agg-var
+944	n_[\]-agg-min
+945	n_[\]-agg-max
+946	n_[\]-agg-median
+947	n_[\]-agg-sum
+948	n_[\]-agg-kurtosis
+949	n_[\]-agg-skewness
+950	n_[^]-agg-any
+951	n_[^]-agg-all
+952	n_[^]-agg-mean
+953	n_[^]-agg-var
+954	n_[^]-agg-min
+955	n_[^]-agg-max
+956	n_[^]-agg-median
+957	n_[^]-agg-sum
+958	n_[^]-agg-kurtosis
+959	n_[^]-agg-skewness

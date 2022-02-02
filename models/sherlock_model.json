@@ -9,7 +9,7 @@
         "config": {
           "batch_input_shape": [
             null,
-            950
+            960
           ],
           "dtype": "float32",
           "sparse": false,

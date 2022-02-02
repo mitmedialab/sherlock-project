@@ -17,8 +17,11 @@ def escape_for_regex(c):
         return c
 
 
+# Notes:
+# 1. form feed ('\f') is whitespace but was not classed as such in the original paper, hence not present below.
+# 2. '\' and '^' are appended to the list to maintain original column sequence
 CHARACTERS_TO_CHECK = (
-    [c for c in string.printable if c not in ('\n', '\f', '\v', '\r', '\t')]
+        [c for c in string.printable if c not in ('\n', '\v', '\r', '\t', '\\', '^')] + ['\\', '^']
 )
 
 
@@ -30,7 +33,7 @@ def generate_chars_col():
     with open("../sherlock/features/feature_column_identifiers/char_col.tsv", "w") as char_col:
         for c in CHARACTERS_TO_CHECK:
             for operation in ('any', 'all', 'mean', 'var', 'min', 'max', 'median', 'sum', 'kurtosis', 'skewness'):
-                col_header = f'n_[{c}]-agg-{operation}'
+                col_header = f'n_{c}-agg-{operation}'
 
                 char_col.write(f'{idx}\t{col_header}\n')
 
