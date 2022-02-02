@@ -125,6 +125,6 @@ venv.bak/
 *.parquet
 tmp
 wheel
-*.npy
+/sherlock/features/*.npy
 retrained*
 *.csv
