@@ -126,5 +126,4 @@ venv.bak/
 tmp
 wheel
 /sherlock/features/*.npy
-retrained*
 *.csv
