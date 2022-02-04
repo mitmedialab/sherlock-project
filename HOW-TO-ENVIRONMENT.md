@@ -51,6 +51,10 @@ source venv/bin/activate
 Now launch PyCharm or Jupyter Notebook
 
 ```
+# If you need fully deterministic results between runs, set the following environment value prior to launching jupyter.
+# See comment in sherlock.features.paragraph_vectors.infer_paragraph_embeddings_features for more info.
+export PYTHONHASHSEED 13
+
 jupyter notebook
 ```
 
