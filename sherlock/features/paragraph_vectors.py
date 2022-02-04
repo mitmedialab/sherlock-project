@@ -103,6 +103,10 @@ def infer_paragraph_embeddings_features(col_values: list, features: OrderedDict,
     # Resetting the random seed before inference keeps the inference vectors deterministic. Gensim uses random values
     # in the inference process, so setting the seed just beforehand makes the inference repeatable.
     # https://github.com/RaRe-Technologies/gensim/issues/447
+
+    # To make the inference repeatable across runtime launches, we also need to set PYTHONHASHSEED
+    # prior to launching the execution environment (i.e. jupyter notebook).  E.g. export PYTHONHASHSEED=13
+    # See above Github thread for more information.
     model.random.seed(13)
 
     tokens = tokenise(col_values)
