@@ -1,20 +1,23 @@
-import random
-import pyarrow.lib
-import re
-import io
 import csv
-import os
+import io
 import multiprocessing
+import os
+import random
+import re
+
 from collections import OrderedDict
+from datetime import datetime
+from functools import partial
+
+import pyarrow.lib
+
+from functional import pseq, seq
 from sherlock.features.bag_of_characters import extract_bag_of_characters_features
 from sherlock.features.bag_of_words import extract_bag_of_words_features
 from sherlock.features.word_embeddings import extract_word_embeddings_features
 from sherlock.features.paragraph_vectors import infer_paragraph_embeddings_features
 from sherlock.features.helpers import literal_eval_as_str
 from sherlock.global_state import is_first, set_first
-from datetime import datetime
-from functional import pseq, seq
-from functools import partial
 
 
 def as_py_str(x):
@@ -22,7 +25,7 @@ def as_py_str(x):
 
 
 def to_string_list(x):
-    return literal_eval_as_str(x, none_value='')
+    return literal_eval_as_str(x, none_value="")
 
 
 def random_sample(values: list):
@@ -36,7 +39,7 @@ def random_sample(values: list):
 #   * reducing whitespace sequences to a single space
 def normalise_whitespace(data):
     if isinstance(data, str):
-        return re.sub(r'\s{2,}', ' ', data.strip())
+        return re.sub(r"\s{2,}", " ", data.strip())
     else:
         return data
 
@@ -60,11 +63,11 @@ def normalise_float(value):
     if isinstance(value, str):
         return value
 
-    return '%g' % value
+    return "%g" % value
 
 
 def values_to_str(values):
-    return ','.join(map(normalise_float, values)) + '\n'
+    return ",".join(map(normalise_float, values)) + "\n"
 
 
 def numeric_values_to_str(od: OrderedDict):
@@ -119,20 +122,26 @@ def extract_features_to_csv(output_path, parquet_values):
 
     start = datetime.now()
 
-    print(f'Starting {output_path} at {start}. Rows={len(parquet_values)}, using {core_count} CPU cores')
+    print(
+        f"Starting {output_path} at {start}. Rows={len(parquet_values)}, using {core_count} CPU cores"
+    )
 
     ensure_path_exists(output_path)
 
     with open(output_path, "w") as outfile:
         # Comparable performance with using pool.imap directly, but the code is *much* cleaner
-        #for keys, values_str in seq(map(as_py_str, parquet_values)) \
-        for keys, values_str in pseq(map(as_py_str, parquet_values), processes=core_count, partition_size=100) \
-                .map(to_string_list) \
-                .map(random_sample) \
-                .map(normalise_string_whitespace) \
-                .map(extract_features) \
-                .map(numeric_values_to_str) \
-                .map(drop_keys):
+        # for keys, values_str in seq(map(as_py_str, parquet_values)) \
+        for keys, values_str in (
+            pseq(
+                map(as_py_str, parquet_values), processes=core_count, partition_size=100
+            )
+            .map(to_string_list)
+            .map(random_sample)
+            .map(normalise_string_whitespace)
+            .map(extract_features)
+            .map(numeric_values_to_str)
+            .map(drop_keys)
+        ):
             i = i + 1
 
             if keys is not None:
@@ -142,22 +151,26 @@ def extract_features_to_csv(output_path, parquet_values):
                 first_keys = keys
                 first_keys_str = keys_to_csv(keys)
 
-                print(f'Exporting {len(first_keys)} column features')
+                print(f"Exporting {len(first_keys)} column features")
 
                 outfile.write(keys_to_csv(keys))
             elif verify_keys:
-                keys_str = ','.join(keys)
+                keys_str = ",".join(keys)
                 if first_keys_str != keys_str:
                     key_list = list(keys)
 
-                    print(f'keys are NOT equal. k1 len={len(first_keys)}, k2 len={len(keys)}')
+                    print(
+                        f"keys are NOT equal. k1 len={len(first_keys)}, k2 len={len(keys)}"
+                    )
 
                     for idx, k1 in enumerate(first_keys):
                         k2 = key_list[idx]
 
                         if k1 != k2:
-                            print(f'{k1} != {k2}')
+                            print(f"{k1} != {k2}")
 
             outfile.write(values_str)
 
-    print(f'Finished. Processed {i} rows in {datetime.now() - start}, key_count={key_count}')
+    print(
+        f"Finished. Processed {i} rows in {datetime.now() - start}, key_count={key_count}"
+    )

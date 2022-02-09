@@ -89,6 +89,9 @@ data/work/
 data/processed
 data/raw
 data.zip
+models/
+data/*
+*.npy
 
 # retrained doc2vec files
 sherlock/features/par_vec_retrained_*

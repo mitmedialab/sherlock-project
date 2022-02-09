@@ -53,7 +53,7 @@ Now launch PyCharm or Jupyter Notebook
 ```
 # If you need fully deterministic results between runs, set the following environment value prior to launching jupyter.
 # See comment in sherlock.features.paragraph_vectors.infer_paragraph_embeddings_features for more info.
-export PYTHONHASHSEED 13
+export PYTHONHASHSEED=13
 
 jupyter notebook
 ```
@@ -61,12 +61,12 @@ jupyter notebook
 ### Profiling code from Jupyter
 
 Within your jupyter notebook, call: `%load_ext line_profiler`
-Profile as follows: 
+Profile as follows:
 
 ```
 # usage : note the usage %lprun -f FUNCTION_TO_PROFILE CODE_EXPRESSION_TO_RUN
           or             %lprun -m MODULE_TO_PROFILE CODE_EXPRESSION_TO_RUN
-# function         
+# function
 %lprun -f prof_function prof_function()
 
 # module
