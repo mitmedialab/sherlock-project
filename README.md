@@ -8,7 +8,7 @@ This project is not installable through PyPI yet. For now, you can install Sherl
 
 
 ### Demonstration of usage
-A notebook can be found in `notebooks/` which shows how to download the raw and preprocessed data files, and demonstrates the usage of Sherlock.
+The notebooks in `notebooks/` prefixed with `01-train-paragraph-vector-features.ipynb` to `03-1-train-and-test-sherlock.ipynb` can be used to reproduce the results, and demonstrates the usage of Sherlock.
 
 
 ### Data
@@ -17,8 +17,7 @@ This will download 3.6GB of data into the `data` directory.
 
 
 ### Making predictions for new dataset
-To use the pretrained model for generating predictions for a new dataset, features can be extracted using the `features.preprocessing` module. Please note that extracting features can take quite long due to the unoptimized code.
-With the resulting feature vectors, the pretrained Sherlock model can be deployed on the dataset.
+To use the pretrained model for generating predictions for a new dataset, features can be extracted using the `features.preprocessing` module. With the resulting feature vectors, the pretrained Sherlock model can be deployed on the dataset.
 
 To retrain Sherlock, you are currently restricted to using 78 classes to comply with the original model architecture. The code of the neural network behind Sherlock will be added soon.
 
@@ -48,10 +47,6 @@ Sherlock can be retrained by using the code in the `deploy.train_sherlock` modul
             └── train_sherlock.py
         ├── features     <- Files to turn raw data, storing raw data columns, into features.
             ├── feature_column_identifiers   <- Directory with feature names categorized by feature set.
-               └── char_col.tsv
-               └── par_col.tsv
-               └── rest_col.tsv
-               └── word_col.tsv
             └── bag_of_characters.py
             └── bag_of_words.py
             └── par_vec_trained_400.pkl
