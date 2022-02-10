@@ -8,6 +8,7 @@ import pandas as pd
 
 from functools import partial
 from google_drive_downloader import GoogleDriveDownloader as gd
+from pyarrow.parquet import ParquetFile
 from tqdm import tqdm
 
 from sherlock.features.bag_of_characters import extract_bag_of_characters_features
@@ -109,6 +110,13 @@ def convert_string_lists_to_lists(
         raise TypeError("Unexpected data type of labels.")
 
     return converted_data, converted_labels
+
+
+def load_parquet_values(path):
+    pf = ParquetFile(source=path)
+    row_df = pf.read_row_group(0)
+
+    return row_df["values"]
 
 
 def extract_features(
