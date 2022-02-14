@@ -1,30 +1,27 @@
 # Sherlock: data and deployment scripts.
 
-Sherlock is a deep-learning approach to semantic data type detection which is important for, among others, data cleaning and schema matching. This repository provides data and scripts to guide the deployment of Sherlock.
+Sherlock is a deep-learning approach to semantic data type detection which is helpful for, among others, data validation, processing and integration. This repository provides data and code to guide usage of Sherlock and replication of results.
 
 
 ### Installation of package
-This project is not installable through PyPI yet. For now, you can install Sherlock by cloning this repository, navigating to the root directory of this repository and run `pip install .`.
+You can install Sherlock by cloning this repository, and run `pip install .`.
 
 
 ### Demonstration of usage
-The notebooks in `notebooks/` prefixed with `01-train-paragraph-vector-features.ipynb` to `03-1-train-and-test-sherlock.ipynb` can be used to reproduce the results, and demonstrates the usage of Sherlock.
+The notebooks in `notebooks/` prefixed with `01-data processing.ipynb` and `02-1-train-and-test-sherlock.ipynb` can be used to reproduce the results, and demonstrate the usage of Sherlock (from data preprocessing to model training and evaluation). The `00-WIP-use-sherlock-out-of-the-box.ipynb` notebook demonstrates usage of the readily trained model for a given table (WIP).
 
 
 ### Data
-Data can be downloaded using the `download_data()` function in the `helpers` module.
-This will download 3.6GB of data into the `data` directory.
+The raw data (corresponding to annotated table columns) can be downloaded using the `download_data()` function in the `helpers` module.
+This will download 3.6GB of data into the `data` directory. Use the `01-data-preprocessing.ipynb` notebook to preprocess this data.
 
 
 ### Making predictions for new dataset
-To use the pretrained model for generating predictions for a new dataset, features can be extracted using the `features.preprocessing` module. With the resulting feature vectors, the pretrained Sherlock model can be deployed on the dataset.
-
-To retrain Sherlock, you are currently restricted to using 78 classes to comply with the original model architecture. The code of the neural network behind Sherlock will be added soon.
+To use the readily trained model for generating predictions for a new dataset, features can be extracted using the `features.preprocessing` module. With the resulting feature vectors, Sherlock can be used in a scikit-learn fashion (`fit`, `predict`, `predict_proba`). Training and evaluation is demonstrated in the `02-1-train-and-test-sherlock.ipynb` notebook.
 
 
 ### Retraining Sherlock
-Sherlock can be retrained by using the code in the `deploy.train_sherlock` module.
-
+The notebook `02-1-train-and-test-sherlock.ipynb` illustrates how Sherlock, as constructed from the `SherlockModel` or loaded from a json file, can be retrained. The model will infer the number of unique classes from the training labels unless you load a model from a json file, the number of classes will be 78 in that case.
 
 
 ## Project Organization
@@ -32,19 +29,21 @@ Sherlock can be retrained by using the code in the `deploy.train_sherlock` modul
 
     ├── docs   <- Files for https://sherlock.media.mit.edu landing page.
 
-    ├── models  <- Trained models.
+    ├── model_files  <- Files with trained model weights and specification.
         ├── sherlock_model.json
         └── sherlock_weights.h5
-
-    ├── notebooks   <- Notebooks demonstrating the deployment of Sherlock using this repository.
-            └── retrain_sherlock.ipynb
-
-    ├── sherlock  <- Package files.
-        ├── deploy  <- Files and modules to (re)train models on new data and generate predictions.
-            └── classes_sherlock.npy
-            └── model_helpers.py
-            └── predict_sherlock.py
-            └── train_sherlock.py
+        
+    ├── notebooks   <- Notebooks demonstrating data preprocessing and train/test of Sherlock.
+        └── 00-WIP-use-sherlock-out-of-the-box.ipynb
+        └── 01-data-preprocessing.ipynb
+        └── 02-1-train-and-test-sherlock.ipynb
+        └── 02-2-train-and-test-sherlock-rf-ensemble.ipynb
+        └── 03-train-paragraph-vector-features-optional.ipynb
+        
+    ├── sherlock  <- Package.
+        ├── deploy  <- Code for (re)training Sherlock, as well as model specification.
+            └── helpers.py
+            └── model.py
         ├── features     <- Files to turn raw data, storing raw data columns, into features.
             ├── feature_column_identifiers   <- Directory with feature names categorized by feature set.
             └── bag_of_characters.py
