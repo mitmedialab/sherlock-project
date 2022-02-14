@@ -1,6 +1,6 @@
 # Sherlock: a deep learning approach to semantic data type detection
 
-Sherlock is a deep-learning approach to semantic data type detection, i.e. labeling tables with column types such as `name`, `address`, etc. This is helpful for, among others, data validation, processing and integration. This repository provides data and code to guide usage of Sherlock and replication of results.
+Sherlock is a deep-learning approach to semantic data type detection, i.e. labeling tables with column types such as `name`, `address`, etc. This is helpful for, among others, data validation, processing and integration. This repository provides data and code to guide usage of Sherlock and replication of results. Please visit https://sherlock.media.mit.edu for more background on this project.
 
 
 ### Installation of package
