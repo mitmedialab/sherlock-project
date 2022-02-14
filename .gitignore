@@ -89,7 +89,7 @@ data/work/
 data/processed
 data/raw
 data.zip
-models/
+model_files/
 data/*
 *.npy
 
