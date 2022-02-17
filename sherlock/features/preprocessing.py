@@ -25,10 +25,13 @@ def prepare_feature_extraction():
     paragraph_vector_file = (
         "../sherlock/features/par_vec_trained_400.pkl.docvecs.vectors_docs.npy"
     )
+    additional_paragraph_vector_file = (
+        "../sherlock/features/par_vec_trained_400.pkl.trainables.syn1neg.npy"
+    )
 
     print(
-        f"""Preparing feature extraction by downloading 2 files:
-        \n {word_embedding_file} and \n {paragraph_vector_file}.
+        f"""Preparing feature extraction by downloading 3 files:
+        \n {word_embedding_file}, \n {paragraph_vector_file} and \n {additional_paragraph_vector_file}.
         """
     )
 
@@ -45,7 +48,7 @@ def prepare_feature_extraction():
         print("GloVe word embedding vectors were downloaded.")
 
     if not os.path.exists(paragraph_vector_file):
-        print("Downloading pretrained paragraph vectors.")
+        print("Downloading first paragraph vector file.")
         file_name = paragraph_vector_file
         gd.download_file_from_google_drive(
             file_id="1vdyGJ4aB71FCaNqJKYX387eVufcH4SAu",
@@ -54,7 +57,19 @@ def prepare_feature_extraction():
             showsize=True,
         )
 
-        print("Trained paragraph vector model was downloaded.")
+        print("Downloaded first paragraph vector file.")
+
+    if not os.path.exists(additional_paragraph_vector_file):
+        print("Downloading second paragraph vector file.")
+        file_name = additional_paragraph_vector_file
+        gd.download_file_from_google_drive(
+            file_id="1hwE8We05oZLrACRibY8jc81NGughv79q",
+            dest_path=file_name,
+            unzip=False,
+            showsize=True,
+        )
+
+        print("Downloaded second paragraph vector file.")
 
     print("All files for extracting word and paragraph embeddings are present.")
 
