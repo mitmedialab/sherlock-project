@@ -1,5 +1,3 @@
-import csv
-import io
 import multiprocessing
 import os
 import random
@@ -16,7 +14,7 @@ from sherlock.features.bag_of_characters import extract_bag_of_characters_featur
 from sherlock.features.bag_of_words import extract_bag_of_words_features
 from sherlock.features.word_embeddings import extract_word_embeddings_features
 from sherlock.features.paragraph_vectors import infer_paragraph_embeddings_features
-from sherlock.features.helpers import literal_eval_as_str
+from sherlock.features.helpers import literal_eval_as_str, keys_to_csv
 from sherlock.global_state import is_first, set_first
 
 
@@ -93,14 +91,6 @@ def values_only(od: OrderedDict):
 # Eliminate serialisation overhead for return values. Useful in some benchmarking scenarios.
 def black_hole(od: OrderedDict):
     return None
-
-
-def keys_to_csv(keys):
-    with io.StringIO() as output:
-        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
-        writer.writerow(keys)
-
-        return output.getvalue()
 
 
 def ensure_path_exists(output_path):

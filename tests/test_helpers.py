@@ -1,5 +1,5 @@
 from unittest import TestCase
-from sherlock.features.helpers import literal_eval_as_str
+from sherlock.features.helpers import literal_eval_as_str, keys_to_csv
 
 
 class Test(TestCase):
@@ -32,3 +32,8 @@ class Test(TestCase):
 
         assert result == ['I have, multiple commas, in string which should, be preserved, ',
                           ', another']
+
+    def test_keys_to_csv(self):
+        result = keys_to_csv(['n_[0]-agg-any', 'n_[,]-agg-any', 'n_["]-agg-any'])
+
+        assert result == '"n_[0]-agg-any","n_[,]-agg-any","n_[""]-agg-any"\r\n'
