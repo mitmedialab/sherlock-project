@@ -15,7 +15,7 @@ from sherlock.features.bag_of_words import extract_bag_of_words_features
 from sherlock.features.word_embeddings import extract_word_embeddings_features
 from sherlock.features.paragraph_vectors import infer_paragraph_embeddings_features
 from sherlock.features.helpers import literal_eval_as_str, keys_to_csv
-from sherlock.global_state import is_first, set_first
+from sherlock.global_state import is_first, set_first, reset_first
 
 
 def as_py_str(x):
@@ -106,6 +106,8 @@ def extract_features_to_csv(output_path, parquet_values):
     i = 0
     key_count = 0
     core_count = multiprocessing.cpu_count()
+
+    reset_first()
 
     # retrieve keys for every row only if verify_keys=True
     drop_keys = partial(keys_on_first, first_keys_only=(not verify_keys))
