@@ -8,12 +8,14 @@ You can install Sherlock by cloning this repository, and run `pip install .`.
 
 
 ## Demonstration of usage
-The notebooks in `notebooks/` prefixed with `01-data processing.ipynb` and `02-1-train-and-test-sherlock.ipynb` can be used to reproduce the results, and demonstrate the usage of Sherlock (from data preprocessing to model training and evaluation). The `00-WIP-use-sherlock-out-of-the-box.ipynb` notebook demonstrates usage of the readily trained model for a given table (WIP).
+The `00-use-sherlock-out-of-the-box.ipynb` notebook demonstrates usage of the readily trained model for a given table (WIP).
+
+The notebooks in `notebooks/` prefixed with `01-data processing.ipynb` and `02-1-train-and-test-sherlock.ipynb` can be used to reproduce the results, and demonstrate the usage of Sherlock (from data preprocessing to model training and evaluation).
 
 
 ## Data
 The raw data (corresponding to annotated table columns) can be downloaded using the `download_data()` function in the `helpers` module.
-This will download 3.6GB of data into the `data` directory. Use the `01-data-preprocessing.ipynb` notebook to preprocess this data. Each column is then represented by a feature vector of dimensions 1x1588. The extracted features per column are based on "paragraph" embeddings (full column), word embeddings (aggregated from each column cell), character count statistics (e.g. average number of "." in a column's cells) and column-level statistics (e.g. column entropy).
+This will download +/- 500MB of data into the `data` directory. Use the `01-data-preprocessing.ipynb` notebook to preprocess this data. Each column is then represented by a feature vector of dimensions 1x1588. The extracted features per column are based on "paragraph" embeddings (full column), word embeddings (aggregated from each column cell), character count statistics (e.g. average number of "." in a column's cells) and column-level statistics (e.g. column entropy).
 
 
 ## The Sherlock model
@@ -36,14 +38,14 @@ The notebook `02-1-train-and-test-sherlock.ipynb` illustrates how Sherlock, as c
     ├── model_files  <- Files with trained model weights and specification.
         ├── sherlock_model.json
         └── sherlock_weights.h5
-        
+
     ├── notebooks   <- Notebooks demonstrating data preprocessing and train/test of Sherlock.
         └── 00-WIP-use-sherlock-out-of-the-box.ipynb
         └── 01-data-preprocessing.ipynb
         └── 02-1-train-and-test-sherlock.ipynb
         └── 02-2-train-and-test-sherlock-rf-ensemble.ipynb
         └── 03-train-paragraph-vector-features-optional.ipynb
-        
+
     ├── sherlock  <- Package.
         ├── deploy  <- Code for (re)training Sherlock, as well as model specification.
             └── helpers.py

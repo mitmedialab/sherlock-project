@@ -1,23 +1,26 @@
 import os
+import zipfile
 
-from google_drive_downloader import GoogleDriveDownloader as gd
+import gdown
 
 
 def download_data():
     """Download raw and preprocessed data files.
     The data is downloaded from Google Drive and stored in the 'data/' directory.
     """
-    data_dir = '../data/data.zip'
-    print(f"Downloading the raw and preprocessed data into {data_dir}.")
+    data_dir = "../data/data/"
+    data_zip = "../data.zip"
+    print(f"Downloading the raw data into {data_dir}.")
 
     if not os.path.exists(data_dir):
-        print('Downloading data directory.')
-        dir_name = data_dir
-        gd.download_file_from_google_drive(
-            file_id='1-g0zbKFAXz7zKZc0Dnh74uDBpZCv4YqU',
-            dest_path=dir_name,
-            unzip=True,
-            showsize=True
+        print("Downloading data directory.")
+        dir_name = data_zip
+        gdown.download(
+            url="https://drive.google.com/uc?id=1-g0zbKFAXz7zKZc0Dnh74uDBpZCv4YqU",
+            output=dir_name,
         )
 
-    print('Data was downloaded.')
+        with zipfile.ZipFile(data_zip, "r") as zf:
+            zf.extractall("../data/")
+
+    print("Data was downloaded.")

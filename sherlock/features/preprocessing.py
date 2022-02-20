@@ -4,6 +4,7 @@ import os
 from collections import OrderedDict
 from typing import Union, Tuple
 
+import gdown
 import pandas as pd
 
 from functools import partial
@@ -22,54 +23,60 @@ from sherlock.features.helpers import literal_eval_as_str, keys_to_csv
 def prepare_feature_extraction():
     """Download embedding files from Google Drive if they do not exist yet."""
     word_embedding_file = "../sherlock/features/glove.6B.50d.txt"
-    paragraph_vector_file = (
+    first_paragraph_vector_file = (
         "../sherlock/features/par_vec_trained_400.pkl.docvecs.vectors_docs.npy"
     )
-    additional_paragraph_vector_file = (
+    second_paragraph_vector_file = (
         "../sherlock/features/par_vec_trained_400.pkl.trainables.syn1neg.npy"
+    )
+    third_paragraph_vector_file = (
+        "../sherlock/features/par_vec_trained_400.pkl.wv.vectors.npy"
     )
 
     print(
-        f"""Preparing feature extraction by downloading 3 files:
-        \n {word_embedding_file}, \n {paragraph_vector_file} and \n {additional_paragraph_vector_file}.
+        f"""Preparing feature extraction by downloading 4 files:
+        \n {word_embedding_file}, \n {first_paragraph_vector_file},
+        \n {second_paragraph_vector_file}, and \n {third_paragraph_vector_file}.
         """
     )
 
     if not os.path.exists(word_embedding_file):
         print("Downloading GloVe word embedding vectors.")
         file_name = word_embedding_file
-        gd.download_file_from_google_drive(
-            file_id="1kayd5oNRQm8-NCvA8pIrtezbQ-B1_Vmk",
-            dest_path=file_name,
-            unzip=False,
-            showsize=True,
+        gdown.download(
+            url="https://drive.google.com/uc?id=1kayd5oNRQm8-NCvA8pIrtezbQ-B1_Vmk",
+            output=file_name,
         )
 
         print("GloVe word embedding vectors were downloaded.")
 
-    if not os.path.exists(paragraph_vector_file):
+    if not os.path.exists(first_paragraph_vector_file):
         print("Downloading first paragraph vector file.")
-        file_name = paragraph_vector_file
-        gd.download_file_from_google_drive(
-            file_id="1vdyGJ4aB71FCaNqJKYX387eVufcH4SAu",
-            dest_path=file_name,
-            unzip=False,
-            showsize=True,
+        file_name = first_paragraph_vector_file
+        gdown.download(
+            url="https://drive.google.com/uc?id=1vdyGJ4aB71FCaNqJKYX387eVufcH4SAu",
+            output=file_name,
         )
 
-        print("Downloaded first paragraph vector file.")
-
-    if not os.path.exists(additional_paragraph_vector_file):
+    if not os.path.exists(second_paragraph_vector_file):
         print("Downloading second paragraph vector file.")
-        file_name = additional_paragraph_vector_file
-        gd.download_file_from_google_drive(
-            file_id="1hwE8We05oZLrACRibY8jc81NGughv79q",
-            dest_path=file_name,
-            unzip=False,
-            showsize=True,
+        file_name = second_paragraph_vector_file
+        gdown.download(
+            url="https://drive.google.com/uc?id=1hwE8We05oZLrACRibY8jc81NGughv79q",
+            output=file_name,
         )
 
         print("Downloaded second paragraph vector file.")
+
+    if not os.path.exists(third_paragraph_vector_file):
+        print("Downloading third paragraph vector file.")
+        file_name = third_paragraph_vector_file
+        gdown.download(
+            url="https://drive.google.com/uc?id=1StGoalk5SMbWX8Z-5weSbIAtK771UwoC",
+            output=file_name,
+        )
+
+        print("Downloaded third paragraph vector file.")
 
     print("All files for extracting word and paragraph embeddings are present.")
 
@@ -136,9 +143,7 @@ def load_parquet_values(path):
     return row_df["values"]
 
 
-def extract_features(
-    output_filename, data: Union[pd.DataFrame, pd.Series]
-):
+def extract_features(output_filename, data: Union[pd.DataFrame, pd.Series]):
     """Extract features from raw data.
 
     Parameters
