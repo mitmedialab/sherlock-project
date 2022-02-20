@@ -120,8 +120,6 @@ def extract_features_to_csv(output_path, parquet_values):
 
     ensure_path_exists(output_path)
 
-    print(parquet_values)
-
     with open(output_path, "w") as outfile:
         # Comparable performance with using pool.imap directly, but the code is *much* cleaner
         # for keys, values_str in seq(map(as_py_str, parquet_values)) \
@@ -143,7 +141,6 @@ def extract_features_to_csv(output_path, parquet_values):
 
             if first_keys is None:
                 first_keys = keys
-                print(keys)
                 first_keys_str = keys_to_csv(keys)
 
                 print(f"Exporting {len(first_keys)} column features")

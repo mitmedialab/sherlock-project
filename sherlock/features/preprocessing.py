@@ -58,9 +58,9 @@ def prepare_feature_extraction():
             output=file_name,
         )
 
-    if not os.path.exists(second__paragraph_vector_file):
-        print("Downloading third paragraph vector file.")
-        file_name = second
+    if not os.path.exists(second_paragraph_vector_file):
+        print("Downloading second paragraph vector file.")
+        file_name = second_paragraph_vector_file
         gdown.download(
             url="https://drive.google.com/uc?id=1hwE8We05oZLrACRibY8jc81NGughv79q",
             output=file_name,

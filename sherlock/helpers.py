@@ -9,7 +9,7 @@ def download_data():
     The data is downloaded from Google Drive and stored in the 'data/' directory.
     """
     data_dir = "../data/data/"
-    data_zip = "../data/data.zip"
+    data_zip = "../data.zip"
     print(f"Downloading the raw data into {data_dir}.")
 
     if not os.path.exists(data_dir):
@@ -21,6 +21,6 @@ def download_data():
         )
 
         with zipfile.ZipFile(data_zip, "r") as zf:
-            zf.extractall(data_dir)
+            zf.extractall("../data/")
 
     print("Data was downloaded.")
