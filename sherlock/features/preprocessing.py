@@ -2,7 +2,7 @@ import random
 import os
 
 from collections import OrderedDict
-from typing import Union
+from typing import Union, Tuple
 
 import pandas as pd
 
@@ -16,7 +16,7 @@ from sherlock.features.bag_of_words import extract_bag_of_words_features
 from sherlock.features.word_embeddings import extract_word_embeddings_features
 from sherlock.features.paragraph_vectors import infer_paragraph_embeddings_features
 from sherlock.global_state import set_first, reset_first
-from sherlock.features.helpers import literal_eval_as_str
+from sherlock.features.helpers import literal_eval_as_str, keys_to_csv
 
 
 def prepare_feature_extraction():
@@ -79,7 +79,7 @@ def convert_string_lists_to_lists(
     labels: Union[pd.DataFrame, pd.Series],
     data_column_name: str = None,
     labels_column_name: str = None,
-) -> pd.Series:
+) -> Tuple[list, list]:
     """Convert strings of arrays with values to arrays of strings of values.
     Each row in de dataframe or series corresponds to a column, represented by a string of a list.
     Each string-list will be converted to a list with string values.
@@ -123,7 +123,9 @@ def convert_string_lists_to_lists(
         converted_labels = labels.to_list()
     else:
         raise TypeError("Unexpected data type of labels.")
-
+    print("types")
+    print(type(converted_data))
+    print(type(converted_labels))
     return converted_data, converted_labels
 
 
@@ -136,7 +138,7 @@ def load_parquet_values(path):
 
 def extract_features(
     output_filename, data: Union[pd.DataFrame, pd.Series]
-) -> pd.DataFrame:
+):
     """Extract features from raw data.
 
     Parameters
@@ -144,7 +146,7 @@ def extract_features(
     output_filename
         filename to output featurized column samples
     data
-        A pandas DataFrame or Series with each row a list of string values.
+        A pandas DataFrame or Series with each row as a list of string values.
     """
     vec_dim = 400
     reuse_model = True
@@ -178,9 +180,9 @@ def extract_features(
 
             if first_keys is None:
                 first_keys = features.keys()
-                first_keys_str = ",".join(features.keys())
-
                 print(f"Exporting {len(first_keys)} column features")
+
+                first_keys_str = keys_to_csv(features.keys())
 
                 outfile.write(first_keys_str + "\n")
 

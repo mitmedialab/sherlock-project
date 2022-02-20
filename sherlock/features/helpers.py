@@ -1,4 +1,6 @@
 import string
+import csv
+import io
 
 
 # https://stackoverflow.com/questions/10593387/when-do-i-need-to-escape-characters-within-a-regex-character-set-within
@@ -87,3 +89,17 @@ def literal_eval_as_str(value, none_value=None):
             strings.append(s)
 
     return strings
+
+
+def keys_to_csv(keys):
+    """
+    Encode a list of strings into an Excel CSV compatible header.
+
+    Wraps all items with double quotes to prevent legitimate values containing a comma from being interpreted as a
+    separator, and encodes existing double quotes with two double quotes.
+    """
+    with io.StringIO() as output:
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+        writer.writerow(keys)
+
+        return output.getvalue()
