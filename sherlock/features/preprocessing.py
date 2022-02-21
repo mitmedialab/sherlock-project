@@ -8,7 +8,6 @@ import gdown
 import pandas as pd
 
 from functools import partial
-from google_drive_downloader import GoogleDriveDownloader as gd
 from pyarrow.parquet import ParquetFile
 from tqdm import tqdm
 
