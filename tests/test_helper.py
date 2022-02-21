@@ -1,5 +1,3 @@
-import os
-
 from sherlock.deploy.helpers import categorize_features
 from collections import OrderedDict
 
