@@ -101,6 +101,8 @@ class SherlockModel:
 
         self.model = model
 
+        _ = helpers._get_categorical_label_encodings(y_train, y_val, model_id)
+
     def predict(self, X: pd.DataFrame, model_id: str = "sherlock") -> np.array:
         """Use sherlock model to generate predictions for X.
 

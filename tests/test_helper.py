@@ -1,4 +1,4 @@
-from sherlock.deploy.model_helpers import categorize_features
+from sherlock.deploy.helpers import categorize_features
 from collections import OrderedDict
 
 CATEGORY_FEATURE_KEYS: dict = categorize_features()
