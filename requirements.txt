@@ -40,7 +40,7 @@ smart-open==1.8.4
 scipy==1.5.4
 setuptools~=47.1.0
 tensorboard==1.15.0
-tensorflow==1.15.5
+tensorflow==2.7.2
 tensorflow-estimator==1.15.1
 termcolor==1.1.0
 tqdm==4.51.0
