@@ -24,7 +24,7 @@ line_profiler==3.3.1
 Markdown==3.1.1
 nltk==3.5
 matplotlib==2.2.5
-numpy==1.21.5
+numpy==1.22.0
 pandas==1.2.0
 pre-commit==2.8.2
 protobuf==3.9.0
