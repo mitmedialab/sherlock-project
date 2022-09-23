@@ -15,7 +15,7 @@ def download_data():
     if not os.path.exists(data_dir):
         print("Downloading data directory.")
         gdown.download(
-            url="https://drive.google.com/uc?id=1-g0zbKFAXz7zKZc0Dnh74uDBpZCv4YqU",
+            url="https://drive.google.com/u/0/uc?id=1RWB7djA5cJ9Nuw41SxKtEhwDyqqfcJst&export=download",
             output=zip_filepath,
         )
 
