@@ -23,6 +23,7 @@ class SherlockModel:
         self.lamb = 0.0001
         self.do = 0.35
         self.lr = 0.0001
+        # self.lr = 0.01
 
         self.model_files_directory = "../model_files/"
 
@@ -95,7 +96,8 @@ class SherlockModel:
                 y_val_cat,
             ),
             callbacks=callbacks,
-            epochs=100,
+            # epochs=100,
+            epochs=10,
             batch_size=256,
         )
 
