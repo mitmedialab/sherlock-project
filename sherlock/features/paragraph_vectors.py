@@ -10,7 +10,7 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from datetime import datetime
 from sherlock.global_state import is_first
 
-assert gensim.models.doc2vec.FAST_VERSION > -1, "This will be painfully slow otherwise"
+assert gensim.models.word2vec_inner.FAST_VERSION > -1, "This will be painfully slow otherwise"
 
 
 def tokenise(values):

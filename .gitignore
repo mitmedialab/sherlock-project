@@ -83,6 +83,7 @@ celerybeat-schedule
 
 # additional files/directories
 glove.6B.50d.txt
+glove.6B.50d.txt*tmp
 par_vec_trained_400.pkl.docvecs.vectors_docs.npy
 data/data/
 data/work/
@@ -107,6 +108,7 @@ venv*/
 ENV/
 env.bak/
 venv.bak/
+.conda37
 
 # IDE
 .spyderproject
@@ -129,4 +131,5 @@ venv.bak/
 tmp
 wheel
 /sherlock/features/*.npy
+/sherlock/features/*.npy*tmp
 *.csv
