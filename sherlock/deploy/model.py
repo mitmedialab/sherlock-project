@@ -211,6 +211,12 @@ class SherlockModel:
         weights_filename = os.path.join(
             self.model_files_directory, f"{model_id}_weights.h5"
         )
+        json_model = self.model.to_json()
+
+        #save the model architecture to JSON file
+        with open(f'{model_id}_model.json', 'w') as json_file:
+            json_file.write(json_model)
+
 
         self.model.save_weights(weights_filename)
 
