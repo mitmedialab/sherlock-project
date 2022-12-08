@@ -3,7 +3,7 @@ astor==0.8.0
 boto==2.49.0
 boto3==1.9.188
 botocore==1.12.188
-certifi==2019.6.16
+certifi==2022.12.7
 chardet==3.0.4
 docutils==0.14
 gast==0.2.2
