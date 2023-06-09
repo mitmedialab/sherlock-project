@@ -43,7 +43,7 @@ def prepare_feature_extraction():
         print("Downloading GloVe word embedding vectors.")
         file_name = word_embedding_file
         gdown.download(
-            url="https://drive.google.com/uc?id=1kayd5oNRQm8-NCvA8pIrtezbQ-B1_Vmk",
+            url="https://drive.google.com/uc?export=download&confirm=pbef&id=1kayd5oNRQm8-NCvA8pIrtezbQ-B1_Vmk",
             output=file_name,
         )
 
@@ -53,7 +53,7 @@ def prepare_feature_extraction():
         print("Downloading first paragraph vector file.")
         file_name = first_paragraph_vector_file
         gdown.download(
-            url="https://drive.google.com/uc?id=1vdyGJ4aB71FCaNqJKYX387eVufcH4SAu",
+            url="https://drive.google.com/uc?export=download&confirm=pbef&id=1vdyGJ4aB71FCaNqJKYX387eVufcH4SAu",
             output=file_name,
         )
 
@@ -61,7 +61,7 @@ def prepare_feature_extraction():
         print("Downloading second paragraph vector file.")
         file_name = second_paragraph_vector_file
         gdown.download(
-            url="https://drive.google.com/uc?id=1hwE8We05oZLrACRibY8jc81NGughv79q",
+            url="https://drive.google.com/uc?export=download&confirm=pbef&id=1hwE8We05oZLrACRibY8jc81NGughv79q",
             output=file_name,
         )
 
@@ -71,7 +71,7 @@ def prepare_feature_extraction():
         print("Downloading third paragraph vector file.")
         file_name = third_paragraph_vector_file
         gdown.download(
-            url="https://drive.google.com/uc?id=1StGoalk5SMbWX8Z-5weSbIAtK771UwoC",
+            url="https://drive.google.com/uc?export=download&confirm=pbef&id=1StGoalk5SMbWX8Z-5weSbIAtK771UwoC",
             output=file_name,
         )
 
