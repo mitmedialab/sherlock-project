@@ -10,7 +10,7 @@ gast==0.2.2
 gdown==4.3.0
 gensim==3.8.3
 google-pasta==0.1.7
-grpcio==1.22.0
+grpcio==1.53.2
 h5py==2.9.0
 idna==2.8
 jmespath==0.9.4
